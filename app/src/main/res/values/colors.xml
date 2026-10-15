@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="fit_marca">#3A8208</color>
+    <color name="fit_marca_clara">#E4FBC4</color>
+    <color name="fit_icone_fundo">#000000</color>
+    <color name="fit_splash_fundo">#000000</color>
+</resources>

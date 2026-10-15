@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tema do app depois da splash; a UI é toda Compose, então só precisa de janela sem barra. -->
+    <style name="Theme.Fit" parent="@android:style/Theme.Material.Light.NoActionBar" />
+
+    <!-- Tema da MainActivity: splash do sistema (Android 12+) e compat nas versões antigas. -->
+    <style name="Theme.Fit.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/fit_splash_fundo</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
+        <item name="postSplashScreenTheme">@style/Theme.Fit</item>
+    </style>
+</resources>

@@ -1,0 +1,28 @@
+# Android / Gradle
+.gradle/
+build/
+*.iml
+.idea/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Segredos locais — nunca versionar (chave OpenWeather, keystore etc.)
+local.properties
+keystore.properties
+*.jks
+*.keystore
+
+# Kotlin / IDE / sistema
+.kotlin/
+.tmp/
+.DS_Store
+Thumbs.db
+*.apk
+*.aab
+
+# iOS (o projeto é gerado pelo XcodeGen: ios/FitPersonal/project.yml)
+ios/**/*.xcodeproj/
+ios/**/xcuserdata/
+ios/**/DerivedData/
+ios/**/*.xcworkspace/xcuserdata/
