@@ -58,6 +58,8 @@ data class DadosWidget(
     /** (horário, nome do aluno) em ordem. */
     val linhas: List<Pair<String, String>>,
     val erro: Boolean = false,
+    /** Pendentes cujo horário já passou (pedem atenção: o widget fica coral). */
+    val atrasados: Int = 0,
 )
 
 /** Próximos agendamentos de hoje na tela inicial; tocar abre o app. */
@@ -81,6 +83,9 @@ class AgendaWidget : GlanceAppWidget() {
             total = itens.size,
             pendentes = pendentes.size,
             linhas = pendentes.map { it.horario to it.nomeAluno },
+            atrasados = pendentes.count { p ->
+                runCatching { java.time.LocalTime.parse(p.horario).isBefore(java.time.LocalTime.now()) }.getOrDefault(false)
+            },
         )
     }.getOrElse { DadosWidget(oculto = true, total = 0, pendentes = 0, linhas = emptyList(), erro = true) }
 }
@@ -101,8 +106,15 @@ private fun Conteudo(d: DadosWidget) {
     // Fundo "pasta" desenhado no tamanho real do widget (aba alta à esquerda, degradê lima).
     val contexto = LocalContext.current
     val tamanho = androidx.glance.LocalSize.current
-    val fundoPasta = androidx.compose.runtime.remember(tamanho) {
-        desenharFundoPasta(contexto, tamanho.width.value, tamanho.height.value)
+    val paleta = when {
+        d.erro -> PaletaWidget.Lima
+        d.total == 0 -> PaletaWidget.Verde        // dia livre
+        d.atrasados > 0 -> PaletaWidget.Coral     // há atendimento que já passou do horário
+        d.pendentes == 0 -> PaletaWidget.Turquesa // tudo concluído
+        else -> PaletaWidget.Lima
+    }
+    val fundoPasta = androidx.compose.runtime.remember(tamanho, paleta) {
+        desenharFundoPasta(contexto, tamanho.width.value, tamanho.height.value, paleta)
     }
 
     // Quantas linhas cabem na altura atual do widget (cada linha ~32 dp; cabeçalho e margens ~82 dp).
@@ -133,7 +145,7 @@ private fun Conteudo(d: DadosWidget) {
                         .padding(horizontal = 8.dp, vertical = 3.dp),
                 ) {
                     Text(
-                        d.pendentes.toString() + "/" + d.total,
+                        if (d.atrasados > 0) d.atrasados.toString() + " atrasado(s)" else d.pendentes.toString() + "/" + d.total,
                         style = TextStyle(color = lima, fontSize = 12.sp, fontWeight = FontWeight.Bold),
                     )
                 }
@@ -189,7 +201,7 @@ private fun Conteudo(d: DadosWidget) {
  * Desenha a "pasta" do fundo (mesma geometria da FolderShape do app) com degradê lima, em pixels reais:
  * o Glance não tem formas livres, então o fundo é uma imagem gerada no tamanho exato do widget.
  */
-private fun desenharFundoPasta(contexto: Context, larguraDp: Float, alturaDp: Float): android.graphics.Bitmap {
+private fun desenharFundoPasta(contexto: Context, larguraDp: Float, alturaDp: Float, paleta: PaletaWidget): android.graphics.Bitmap {
     val d = contexto.resources.displayMetrics.density
     val w = Math.round(larguraDp * d).coerceIn(2, 1600)
     val h = Math.round(alturaDp * d).coerceIn(2, 1600)
@@ -218,11 +230,19 @@ private fun desenharFundoPasta(contexto: Context, larguraDp: Float, alturaDp: Fl
     val tinta = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply {
         shader = android.graphics.LinearGradient(
             0f, 0f, wf, hf,
-            intArrayOf(0xFFEAFA9A.toInt(), 0xFFD9F24F.toInt(), 0xFFBCD43F.toInt()),
+            intArrayOf(paleta.claro, paleta.meio, paleta.escuro),
             floatArrayOf(0f, 0.5f, 1f),
             android.graphics.Shader.TileMode.CLAMP,
         )
     }
     canvas.drawPath(caminho, tinta)
     return bmp
+}
+
+/** Cores do widget por situação do dia: claro → meio → escuro do degradê. */
+private enum class PaletaWidget(val claro: Int, val meio: Int, val escuro: Int) {
+    Lima(0xFFEAFA9A.toInt(), 0xFFD9F24F.toInt(), 0xFFBCD43F.toInt()),
+    Coral(0xFFFFB9A8.toInt(), 0xFFFF7A5C.toInt(), 0xFFE0603F.toInt()),
+    Turquesa(0xFF9BEEE3.toInt(), 0xFF34D1BF.toInt(), 0xFF27AE9E.toInt()),
+    Verde(0xFFC8F9B0.toInt(), 0xFF8CEB5E.toInt(), 0xFF6FC947.toInt()),
 }
