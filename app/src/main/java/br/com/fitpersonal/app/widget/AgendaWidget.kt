@@ -98,15 +98,22 @@ private fun Conteudo(d: DadosWidget) {
     val abrirApp = Intent(LocalContext.current, MainActivity::class.java)
         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
-    // Quantas linhas cabem na altura atual do widget (cada linha ~32 dp; cabeçalho e margens ~74 dp).
-    val altura = androidx.glance.LocalSize.current.height
-    val linhasMax = ((altura - 74.dp) / 32.dp).toInt().coerceIn(1, 6)
+    // Fundo "pasta" desenhado no tamanho real do widget (aba alta à esquerda, degradê lima).
+    val contexto = LocalContext.current
+    val tamanho = androidx.glance.LocalSize.current
+    val fundoPasta = androidx.compose.runtime.remember(tamanho) {
+        desenharFundoPasta(contexto, tamanho.width.value, tamanho.height.value)
+    }
+
+    // Quantas linhas cabem na altura atual do widget (cada linha ~32 dp; cabeçalho e margens ~82 dp).
+    val altura = tamanho.height
+    val linhasMax = ((altura - 82.dp) / 32.dp).toInt().coerceIn(1, 6)
 
     Column(
         modifier = GlanceModifier
             .fillMaxSize()
-            .background(ImageProvider(R.drawable.widget_fundo))
-            .padding(14.dp)
+            .background(ImageProvider(fundoPasta))
+            .padding(start = 14.dp, end = 14.dp, top = 28.dp, bottom = 14.dp)
             .clickable(actionStartActivity(abrirApp)),
     ) {
         Row(
@@ -176,4 +183,46 @@ private fun Conteudo(d: DadosWidget) {
             }
         }
     }
+}
+
+/**
+ * Desenha a "pasta" do fundo (mesma geometria da FolderShape do app) com degradê lima, em pixels reais:
+ * o Glance não tem formas livres, então o fundo é uma imagem gerada no tamanho exato do widget.
+ */
+private fun desenharFundoPasta(contexto: Context, larguraDp: Float, alturaDp: Float): android.graphics.Bitmap {
+    val d = contexto.resources.displayMetrics.density
+    val w = Math.round(larguraDp * d).coerceIn(2, 1600)
+    val h = Math.round(alturaDp * d).coerceIn(2, 1600)
+    val bmp = android.graphics.Bitmap.createBitmap(w, h, android.graphics.Bitmap.Config.ARGB_8888)
+    val canvas = android.graphics.Canvas(bmp)
+
+    val wf = w.toFloat()
+    val hf = h.toFloat()
+    val r = minOf(28f * d, hf / 3f)
+    val n = minOf(18f * d, hf / 3f)
+    val xAba = (wf * 0.6f).coerceIn(r * 2f, wf - r * 3f)
+
+    val caminho = android.graphics.Path().apply {
+        moveTo(0f, r)
+        arcTo(android.graphics.RectF(0f, 0f, 2f * r, 2f * r), 180f, 90f, false)
+        lineTo(xAba - r, 0f)
+        cubicTo(xAba, 0f, xAba, n, xAba + r, n)
+        lineTo(wf - r, n)
+        arcTo(android.graphics.RectF(wf - 2f * r, n, wf, n + 2f * r), 270f, 90f, false)
+        lineTo(wf, hf - r)
+        arcTo(android.graphics.RectF(wf - 2f * r, hf - 2f * r, wf, hf), 0f, 90f, false)
+        lineTo(r, hf)
+        arcTo(android.graphics.RectF(0f, hf - 2f * r, 2f * r, hf), 90f, 90f, false)
+        close()
+    }
+    val tinta = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply {
+        shader = android.graphics.LinearGradient(
+            0f, 0f, wf, hf,
+            intArrayOf(0xFFEAFA9A.toInt(), 0xFFD9F24F.toInt(), 0xFFBCD43F.toInt()),
+            floatArrayOf(0f, 0.5f, 1f),
+            android.graphics.Shader.TileMode.CLAMP,
+        )
+    }
+    canvas.drawPath(caminho, tinta)
+    return bmp
 }
