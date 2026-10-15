@@ -31,6 +31,16 @@ import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
+import androidx.glance.ImageProvider
+import androidx.glance.appwidget.cornerRadius
+import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
+import androidx.glance.layout.Row
+import androidx.glance.layout.Spacer
+import androidx.glance.layout.fillMaxWidth
+import androidx.glance.layout.height
+import androidx.glance.layout.width
+import br.com.fitpersonal.app.R
 
 @EntryPoint
 @InstallIn(SingletonComponent::class)
@@ -52,6 +62,8 @@ data class DadosWidget(
 
 /** Próximos agendamentos de hoje na tela inicial; tocar abre o app. */
 class AgendaWidget : GlanceAppWidget() {
+
+    override val sizeMode: androidx.glance.appwidget.SizeMode = androidx.glance.appwidget.SizeMode.Exact
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val dados = carregar(context)
@@ -79,38 +91,87 @@ class AgendaWidgetReceiver : GlanceAppWidgetReceiver() {
 
 @androidx.compose.runtime.Composable
 private fun Conteudo(d: DadosWidget) {
-    val fundo = ColorProvider(day = Color(0xFFFFFFFF), night = Color(0xFF1B1B1F))
-    val texto = ColorProvider(day = Color(0xFF1B1B1F), night = Color(0xFFE6E1E5))
-    val apoio = ColorProvider(day = Color(0xFF5F6368), night = Color(0xFFC4C7C5))
+    val preto = androidx.glance.unit.ColorProvider(Color(0xFF0A0D08))
+    val suave = androidx.glance.unit.ColorProvider(Color(0xB30A0D08))
+    val lima = androidx.glance.unit.ColorProvider(Color(0xFFD9F24F))
     // Intent explícito: funciona em qualquer versão do Glance (a variante com tipo reificado mudou de pacote).
     val abrirApp = Intent(LocalContext.current, MainActivity::class.java)
         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
+    // Quantas linhas cabem na altura atual do widget (cada linha ~32 dp; cabeçalho e margens ~74 dp).
+    val altura = androidx.glance.LocalSize.current.height
+    val linhasMax = ((altura - 74.dp) / 32.dp).toInt().coerceIn(1, 6)
+
     Column(
         modifier = GlanceModifier
             .fillMaxSize()
-            .background(fundo)
-            .padding(12.dp)
+            .background(ImageProvider(R.drawable.widget_fundo))
+            .padding(14.dp)
             .clickable(actionStartActivity(abrirApp)),
     ) {
-        Text(
-            "Agenda de hoje",
-            style = TextStyle(color = texto, fontSize = 14.sp, fontWeight = FontWeight.Bold),
-        )
-        when {
-            d.erro -> Text("Abra o app para atualizar.", style = TextStyle(color = apoio, fontSize = 12.sp))
-            d.total == 0 -> Text("Dia livre", style = TextStyle(color = apoio, fontSize = 12.sp))
-            d.oculto -> Text(
-                "${d.pendentes} pendente(s) de ${d.total}",
-                style = TextStyle(color = texto, fontSize = 13.sp),
+        Row(
+            modifier = GlanceModifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                "Agenda de hoje",
+                modifier = GlanceModifier.defaultWeight(),
+                style = TextStyle(color = preto, fontSize = 16.sp, fontWeight = FontWeight.Bold),
             )
-            d.linhas.isEmpty() -> Text("Tudo concluído hoje", style = TextStyle(color = apoio, fontSize = 12.sp))
-            else -> {
-                d.linhas.take(4).forEach { (hora, nome) ->
-                    Text("$hora  $nome", style = TextStyle(color = texto, fontSize = 13.sp), maxLines = 1)
+            if (!d.erro && d.total > 0) {
+                Box(
+                    modifier = GlanceModifier
+                        .background(preto)
+                        .cornerRadius(12.dp)
+                        .padding(horizontal = 8.dp, vertical = 3.dp),
+                ) {
+                    Text(
+                        d.pendentes.toString() + "/" + d.total,
+                        style = TextStyle(color = lima, fontSize = 12.sp, fontWeight = FontWeight.Bold),
+                    )
                 }
-                if (d.linhas.size > 4) {
-                    Text("+${d.linhas.size - 4} mais", style = TextStyle(color = apoio, fontSize = 12.sp))
+            }
+        }
+        Spacer(GlanceModifier.height(8.dp))
+        when {
+            d.erro -> Text("Abra o app para atualizar.", style = TextStyle(color = suave, fontSize = 13.sp))
+            d.total == 0 -> Text("Dia livre 🎉", style = TextStyle(color = preto, fontSize = 15.sp, fontWeight = FontWeight.Medium))
+            d.oculto -> Text(
+                d.pendentes.toString() + " pendente(s) de " + d.total,
+                style = TextStyle(color = preto, fontSize = 14.sp, fontWeight = FontWeight.Medium),
+            )
+            d.linhas.isEmpty() -> Text(
+                "Tudo concluído hoje ✅",
+                style = TextStyle(color = preto, fontSize = 15.sp, fontWeight = FontWeight.Medium),
+            )
+            else -> {
+                d.linhas.take(linhasMax).forEach { (hora, nome) ->
+                    Row(
+                        modifier = GlanceModifier.fillMaxWidth().padding(bottom = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Box(
+                            modifier = GlanceModifier
+                                .background(preto)
+                                .cornerRadius(10.dp)
+                                .padding(horizontal = 8.dp, vertical = 3.dp),
+                        ) {
+                            Text(hora, style = TextStyle(color = lima, fontSize = 13.sp, fontWeight = FontWeight.Bold))
+                        }
+                        Spacer(GlanceModifier.width(10.dp))
+                        Text(
+                            nome,
+                            modifier = GlanceModifier.defaultWeight(),
+                            style = TextStyle(color = preto, fontSize = 14.sp, fontWeight = FontWeight.Medium),
+                            maxLines = 1,
+                        )
+                    }
+                }
+                if (d.linhas.size > linhasMax) {
+                    Text(
+                        "+" + (d.linhas.size - linhasMax) + " mais",
+                        style = TextStyle(color = suave, fontSize = 12.sp),
+                    )
                 }
             }
         }
