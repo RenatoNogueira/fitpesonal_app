@@ -51,12 +51,13 @@ fun CabecalhoTela(
     acoes: @Composable RowScope.() -> Unit = {},
     conteudo: @Composable ColumnScope.() -> Unit = {},
 ) {
-    CompositionLocalProvider(LocalContentColor provides PaletaPasta.Preto) {
+    val tinta = PaletaPasta.tinta(cor)
+    CompositionLocalProvider(LocalContentColor provides tinta) {
         Column(
             modifier
                 .fillMaxWidth()
                 .clip(FolderShape(raio = 26.dp, recorte = 20.dp, fracaoAba = 0.6f))
-                .background(cor)
+                .background(PaletaPasta.degrade(cor))
                 .padding(start = 20.dp, end = 12.dp, top = 30.dp, bottom = 14.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
@@ -66,7 +67,7 @@ fun CabecalhoTela(
                         titulo,
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.ExtraBold,
-                        color = PaletaPasta.Preto,
+                        color = tinta,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.semantics { heading() },
@@ -75,7 +76,7 @@ fun CabecalhoTela(
                         Text(
                             subtitulo,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = PaletaPasta.Preto.copy(alpha = 0.75f),
+                            color = PaletaPasta.tintaSuave(cor),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )

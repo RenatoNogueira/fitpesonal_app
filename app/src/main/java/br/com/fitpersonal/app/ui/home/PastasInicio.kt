@@ -74,7 +74,7 @@ fun PilhaAgenda(
                 .padding(horizontal = 22.dp)
                 .height(90.dp)
                 .clip(FolderShape())
-                .background(PaletaPasta.Coral),
+                .background(PaletaPasta.degrade(PaletaPasta.Coral)),
         )
         Box(
             Modifier
@@ -84,7 +84,7 @@ fun PilhaAgenda(
                 .padding(horizontal = 11.dp)
                 .height(90.dp)
                 .clip(FolderShape())
-                .background(PaletaPasta.Verde),
+                .background(PaletaPasta.degrade(PaletaPasta.Verde)),
         )
 
         // pasta da frente
@@ -93,7 +93,7 @@ fun PilhaAgenda(
                 .padding(top = 24.dp)
                 .fillMaxWidth()
                 .clip(FolderShape())
-                .background(PaletaPasta.Lima)
+                .background(PaletaPasta.degrade(PaletaPasta.Lima))
                 .clickable(onClick = if (itens.isEmpty()) onCriar else onAbrir)
                 .padding(start = 16.dp, end = 16.dp, top = 34.dp, bottom = 14.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -170,7 +170,7 @@ fun CartaoAniversarioPasta(
     cor: Color,
     modifier: Modifier = Modifier,
 ) {
-    val tinta = PaletaPasta.Preto
+    val tinta = PaletaPasta.tinta(cor)
     val situacao = AniversarioRules.situacao(nascimento, hoje)
     val passou = situacao == SituacaoAniversario.JA_PASSOU
     val dia = AniversarioRules.aniversarioEm(nascimento, hoje.year).dayOfMonth
@@ -180,7 +180,7 @@ fun CartaoAniversarioPasta(
             .width(168.dp)
             .alpha(if (passou) 0.7f else 1f)
             .clip(FolderShape())
-            .background(cor)
+            .background(PaletaPasta.degrade(cor))
             .padding(start = 14.dp, end = 14.dp, top = 30.dp, bottom = 14.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
@@ -194,7 +194,7 @@ fun CartaoAniversarioPasta(
                     .background(tinta),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(dia.toString(), style = MaterialTheme.typography.labelMedium, color = cor, fontWeight = FontWeight.Bold)
+                Text(dia.toString(), style = MaterialTheme.typography.labelMedium, color = if (tinta == PaletaPasta.Preto) cor else PaletaPasta.Preto, fontWeight = FontWeight.Bold)
             }
         }
         Text(
@@ -208,7 +208,7 @@ fun CartaoAniversarioPasta(
         Text(
             AniversarioRules.descricaoIdade(nascimento, hoje),
             style = MaterialTheme.typography.bodySmall,
-            color = tinta.copy(alpha = 0.75f),
+            color = PaletaPasta.tintaSuave(cor),
             maxLines = 1,
         )
         Text(

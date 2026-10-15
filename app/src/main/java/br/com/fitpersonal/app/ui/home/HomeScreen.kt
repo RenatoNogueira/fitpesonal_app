@@ -761,7 +761,10 @@ private fun CarrosselResumo(paginas: List<PaginaResumo>, modifier: Modifier = Mo
                         .padding(horizontal = (k * 11).dp)
                         .height(200.dp)
                         .clip(br.com.fitpersonal.app.ui.common.FolderShape())
-                        .background(paginas[(atual + k) % paginas.size].fundo.copy(alpha = 0.85f)),
+                        .background(
+                            br.com.fitpersonal.app.ui.common.PaletaPasta.degrade(paginas[(atual + k) % paginas.size].fundo),
+                            alpha = 0.9f,
+                        ),
                 )
             }
         }
@@ -772,11 +775,14 @@ private fun CarrosselResumo(paginas: List<PaginaResumo>, modifier: Modifier = Mo
             modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth().height(238.dp),
         ) { i ->
             val p = paginas.getOrNull(i) ?: return@Crossfade
-            val sobre = corSobre(p.fundo)
+            val sobre = br.com.fitpersonal.app.ui.common.PaletaPasta.tinta(p.fundo)
             Card(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().background(
+                    br.com.fitpersonal.app.ui.common.PaletaPasta.degrade(p.fundo),
+                    br.com.fitpersonal.app.ui.common.FolderShape(),
+                ),
                 shape = br.com.fitpersonal.app.ui.common.FolderShape(),
-                colors = CardDefaults.cardColors(containerColor = p.fundo),
+                colors = CardDefaults.cardColors(containerColor = androidx.compose.ui.graphics.Color.Transparent),
             ) {
                 Column(
                     Modifier.fillMaxSize().padding(start = 16.dp, end = 30.dp, top = 32.dp, bottom = 8.dp),
@@ -799,7 +805,7 @@ private fun CarrosselResumo(paginas: List<PaginaResumo>, modifier: Modifier = Mo
         }
 
         // indicador de página, à direita (cada ponto também é um botão)
-        val corPonto = corSobre(paginas[atual].fundo)
+        val corPonto = br.com.fitpersonal.app.ui.common.PaletaPasta.tinta(paginas[atual].fundo)
         Column(
             Modifier.align(Alignment.CenterEnd).padding(end = 6.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),

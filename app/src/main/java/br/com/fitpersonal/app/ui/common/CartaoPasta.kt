@@ -28,6 +28,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -45,6 +46,36 @@ object PaletaPasta {
     val Teal = Color(0xFF34D1BF)
     val Rosa = Color(0xFFFFA3C7)
     val Preto = Color(0xFF0A0D08)
+
+    /** Ponta mais clara do degradê (30% de branco). */
+    fun claro(cor: Color): Color = androidx.compose.ui.graphics.lerp(cor, Color.White, 0.30f)
+
+    /** Ponta mais escura do degradê (14% de preto). */
+    fun escuro(cor: Color): Color = androidx.compose.ui.graphics.lerp(cor, Color.Black, 0.14f)
+
+    /** Degradê diagonal claro → cor → escuro, para fundos de cartões e cabeçalhos. */
+    fun degrade(cor: Color): androidx.compose.ui.graphics.Brush =
+        androidx.compose.ui.graphics.Brush.linearGradient(listOf(claro(cor), cor, escuro(cor)))
+
+    private fun contraste(a: Color, b: Color): Float {
+        val la = a.luminance()
+        val lb = b.luminance()
+        return (maxOf(la, lb) + 0.05f) / (minOf(la, lb) + 0.05f)
+    }
+
+    /**
+     * Cor de texto (preto ou branco) com o MAIOR contraste mínimo sobre as três cores do degradê de [cor]:
+     * a leitura fica boa em qualquer ponto do cartão, não só no meio.
+     */
+    fun tinta(cor: Color): Color {
+        val pontos = listOf(claro(cor), cor, escuro(cor))
+        val comPreto = pontos.minOf { contraste(Preto, it) }
+        val comBranco = pontos.minOf { contraste(Color.White, it) }
+        return if (comPreto >= comBranco) Preto else Color.White
+    }
+
+    /** Texto secundário: a mesma tinta, um pouco mais suave (sem perder o contraste mínimo de leitura). */
+    fun tintaSuave(cor: Color): Color = tinta(cor).copy(alpha = 0.82f)
 }
 
 /**
@@ -89,11 +120,11 @@ fun KpiPasta(
     fundo: Color,
     modifier: Modifier = Modifier,
 ) {
-    val tinta = PaletaPasta.Preto
+    val tinta = PaletaPasta.tinta(fundo)
     Column(
         modifier
             .clip(FolderShape())
-            .background(fundo)
+            .background(PaletaPasta.degrade(fundo))
             .padding(start = 14.dp, end = 14.dp, top = 30.dp, bottom = 14.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
@@ -101,7 +132,7 @@ fun KpiPasta(
             Modifier.size(40.dp).clip(CircleShape).background(tinta),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(icone, contentDescription = null, tint = fundo, modifier = Modifier.size(22.dp))
+            Icon(icone, contentDescription = null, tint = if (tinta == PaletaPasta.Preto) fundo else PaletaPasta.Preto, modifier = Modifier.size(22.dp))
         }
         Spacer(Modifier.height(8.dp))
         Text(
@@ -109,8 +140,17 @@ fun KpiPasta(
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.ExtraBold,
             color = tinta,
+            maxLines = 1,
+            softWrap = false,
+            overflow = TextOverflow.Ellipsis,
         )
-        Text(rotulo, style = MaterialTheme.typography.bodyMedium, color = tinta.copy(alpha = 0.75f), maxLines = 1)
+        Text(
+            rotulo,
+            style = MaterialTheme.typography.bodyMedium,
+            color = PaletaPasta.tintaSuave(fundo),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 
@@ -142,12 +182,14 @@ fun CartaoPastaItem(
     inicio: @Composable () -> Unit = {},
     fim: @Composable ColumnScope.() -> Unit = {},
 ) {
-    CompositionLocalProvider(LocalContentColor provides PaletaPasta.Preto) {
+    val base = androidx.compose.ui.graphics.lerp(cor, Color.White, 0.25f)
+    val tinta = PaletaPasta.tinta(base)
+    CompositionLocalProvider(LocalContentColor provides tinta) {
         Row(
             modifier
                 .fillMaxWidth()
                 .clip(FolderShape(raio = 20.dp, recorte = 14.dp, fracaoAba = 0.5f))
-                .background(androidx.compose.ui.graphics.lerp(cor, Color.White, 0.25f))
+                .background(PaletaPasta.degrade(base))
                 .clickable(onClick = onClick)
                 .padding(start = 14.dp, end = 10.dp, top = 22.dp, bottom = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -159,7 +201,7 @@ fun CartaoPastaItem(
                     titulo,
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    color = PaletaPasta.Preto,
+                    color = tinta,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -167,7 +209,7 @@ fun CartaoPastaItem(
                     Text(
                         subtitulo,
                         style = MaterialTheme.typography.bodySmall,
-                        color = PaletaPasta.Preto.copy(alpha = 0.75f),
+                        color = PaletaPasta.tintaSuave(base),
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                     )
