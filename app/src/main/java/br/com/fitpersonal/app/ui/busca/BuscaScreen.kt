@@ -49,6 +49,12 @@ import java.io.File
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.filled.Assessment
+import androidx.compose.material.icons.filled.Event
+import androidx.compose.material.icons.filled.FitnessCenter
+import androidx.compose.ui.draw.clip
 
 private val DATA: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
@@ -150,16 +156,29 @@ fun BuscaScreen(
     val termo by vm.termo.collectAsStateWithLifecycle()
     val r by vm.resultado.collectAsStateWithLifecycle()
 
-    Scaffold(
-        containerColor = MaterialTheme.colorScheme.background,
-        topBar = {
-            TopAppBar(
-                title = { Text("Buscar", style = MaterialTheme.typography.titleLarge) },
-                navigationIcon = { IconButton(onClick = onVoltar) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Voltar") } },
-            )
-        },
-    ) { padding ->
+    Scaffold(containerColor = MaterialTheme.colorScheme.background) { padding ->
         Column(Modifier.padding(padding).fillMaxSize()) {
+            br.com.fitpersonal.app.ui.common.CabecalhoTela(
+                titulo = "Buscar",
+                subtitulo = if (termo.isBlank()) "Alunos, treinos, avaliações e agenda"
+                else "Resultados para \"" + termo.trim() + "\"",
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp),
+                cor = br.com.fitpersonal.app.ui.common.PaletaPasta.Lima,
+                acoes = {
+                    br.com.fitpersonal.app.ui.common.AcaoCabecalho(Icons.AutoMirrored.Filled.ArrowBack, "Voltar", onVoltar)
+                },
+            ) {
+                if (termo.isNotBlank() && !r.vazio) {
+                    br.com.fitpersonal.app.ui.common.LinhaPilulas(
+                        listOfNotNull(
+                            if (r.alunos.isNotEmpty()) r.alunos.size.toString() + " aluno(s)" else null,
+                            if (r.treinos.isNotEmpty()) r.treinos.size.toString() + " treino(s)" else null,
+                            if (r.avaliacoes.isNotEmpty()) r.avaliacoes.size.toString() + " avaliação(ões)" else null,
+                            if (r.agendamentos.isNotEmpty()) r.agendamentos.size.toString() + " agendamento(s)" else null,
+                        ),
+                    )
+                }
+            }
             CampoBusca(
                 valor = termo,
                 onValorChange = vm::buscar,
@@ -182,53 +201,80 @@ fun BuscaScreen(
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
                     if (r.alunos.isNotEmpty()) {
-                        item { TituloSecao("Alunos (${r.alunos.size})") }
-                        items(r.alunos, key = { "a${it.id}" }) { a ->
-                            CartaoItem(
-                                modifier = Modifier.animateItem(),
+                        item { TituloSecao("Alunos (" + r.alunos.size + ")") }
+                        items(r.alunos, key = { "a" + it.id }) { a ->
+                            br.com.fitpersonal.app.ui.common.CartaoPastaItem(
+                                cor = br.com.fitpersonal.app.ui.common.PaletaPasta.Verde,
                                 onClick = { onAbrirAluno(a.id) },
+                                modifier = Modifier.animateItem(),
                                 titulo = a.nome,
                                 subtitulo = a.objetivo?.takeIf { it.isNotBlank() },
-                                inicio = { AvatarAluno(a.nome, vm.arquivoFoto(a.fotoPerfil), tamanho = 44.dp) },
+                                inicio = { AvatarAluno(a.nome, vm.arquivoFoto(a.fotoPerfil), tamanho = 48.dp) },
                             )
                         }
                     }
                     if (r.treinos.isNotEmpty()) {
-                        item { TituloSecao("Treinos (${r.treinos.size})") }
-                        items(r.treinos, key = { "t${it.id}" }) { t ->
-                            CartaoItem(
-                                modifier = Modifier.animateItem(),
+                        item { TituloSecao("Treinos (" + r.treinos.size + ")") }
+                        items(r.treinos, key = { "t" + it.id }) { t ->
+                            br.com.fitpersonal.app.ui.common.CartaoPastaItem(
+                                cor = br.com.fitpersonal.app.ui.common.PaletaPasta.Coral,
                                 onClick = { onAbrirTreino(t.id) },
+                                modifier = Modifier.animateItem(),
                                 titulo = t.nome,
-                                subtitulo = "Aluno: ${t.nomeAluno}",
+                                subtitulo = "Aluno: " + t.nomeAluno,
+                                inicio = {
+                                    DiscoDeIcone(Icons.Filled.FitnessCenter, br.com.fitpersonal.app.ui.common.PaletaPasta.Coral)
+                                },
                             )
                         }
                     }
                     if (r.avaliacoes.isNotEmpty()) {
-                        item { TituloSecao("Avaliações (${r.avaliacoes.size})") }
-                        items(r.avaliacoes, key = { "av${it.id}" }) { a ->
-                            CartaoItem(
-                                modifier = Modifier.animateItem(),
+                        item { TituloSecao("Avaliações (" + r.avaliacoes.size + ")") }
+                        items(r.avaliacoes, key = { "av" + it.id }) { a ->
+                            br.com.fitpersonal.app.ui.common.CartaoPastaItem(
+                                cor = br.com.fitpersonal.app.ui.common.PaletaPasta.Rosa,
                                 onClick = { onAbrirAvaliacao(a.id) },
+                                modifier = Modifier.animateItem(),
                                 titulo = a.nomeAluno,
-                                subtitulo = "${a.data.format(DATA)} • ${a.resumo}",
+                                subtitulo = a.data.format(DATA) + " • " + a.resumo,
+                                inicio = {
+                                    DiscoDeIcone(Icons.Filled.Assessment, br.com.fitpersonal.app.ui.common.PaletaPasta.Rosa)
+                                },
                             )
                         }
                     }
                     if (r.agendamentos.isNotEmpty()) {
-                        item { TituloSecao("Agendamentos (${r.agendamentos.size})") }
-                        items(r.agendamentos, key = { "ag${it.id}" }) { g ->
-                            CartaoItem(
-                                modifier = Modifier.animateItem(),
+                        item { TituloSecao("Agendamentos (" + r.agendamentos.size + ")") }
+                        items(r.agendamentos, key = { "ag" + it.id }) { g ->
+                            br.com.fitpersonal.app.ui.common.CartaoPastaItem(
+                                cor = br.com.fitpersonal.app.ui.common.PaletaPasta.Teal,
                                 onClick = { onAbrirAgendamento(g.id) },
+                                modifier = Modifier.animateItem(),
                                 titulo = g.nomeAluno,
-                                subtitulo = "${g.data.format(DATA)} às ${g.horario} • ${g.tipo} • ${g.status}" +
-                                    (g.anotacao?.takeIf { it.isNotBlank() }?.let { " • $it" } ?: ""),
+                                subtitulo = g.data.format(DATA) + " às " + g.horario + " • " + g.tipo + " • " + g.status +
+                                    (g.anotacao?.takeIf { it.isNotBlank() }?.let { " • " + it } ?: ""),
+                                inicio = {
+                                    DiscoDeIcone(Icons.Filled.Event, br.com.fitpersonal.app.ui.common.PaletaPasta.Teal)
+                                },
                             )
                         }
                     }
                 }
             }
         }
+    }
+}
+
+/** Disco preto com o ícone na cor do cartão (mesmo desenho dos itens de Treinos e Agenda). */
+@Composable
+private fun DiscoDeIcone(icone: androidx.compose.ui.graphics.vector.ImageVector, cor: androidx.compose.ui.graphics.Color) {
+    androidx.compose.foundation.layout.Box(
+        Modifier
+            .size(44.dp)
+            .clip(androidx.compose.foundation.shape.CircleShape)
+            .background(br.com.fitpersonal.app.ui.common.PaletaPasta.Preto),
+        contentAlignment = androidx.compose.ui.Alignment.Center,
+    ) {
+        androidx.compose.material3.Icon(icone, contentDescription = null, tint = cor, modifier = Modifier.size(24.dp))
     }
 }
