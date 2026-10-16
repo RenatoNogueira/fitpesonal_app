@@ -9,7 +9,7 @@ data class MetaComposicao(val idAluno: Long, val metrica: Metrica, val alvo: Dou
  * Andamento rumo à meta. [fracao] vai de 0 (ainda no ponto de partida ou pior) a 1 (atingida);
  * [faltam] é a distância que resta até o alvo (0 quando atingida).
  */
-data class ProgressoMeta(
+data class ProgressoComposicao(
     val metrica: Metrica,
     val inicio: Double,
     val atual: Double,
@@ -26,7 +26,7 @@ object MetaComposicaoRules {
     )
 
     /** [inicio] é o valor da primeira avaliação; [atual], o da mais recente. Nunca devolve NaN. */
-    fun progresso(metrica: Metrica, inicio: Double, atual: Double, alvo: Double): ProgressoMeta {
+    fun progresso(metrica: Metrica, inicio: Double, atual: Double, alvo: Double): ProgressoComposicao {
         val subir = alvo > inicio
         val atingida = if (alvo == inicio) abs(atual - alvo) < 0.05 else if (subir) atual >= alvo else atual <= alvo
         val total = alvo - inicio
@@ -35,7 +35,7 @@ object MetaComposicaoRules {
             total == 0.0 -> 0f
             else -> ((atual - inicio) / total).toFloat().coerceIn(0f, 1f)
         }
-        return ProgressoMeta(
+        return ProgressoComposicao(
             metrica = metrica,
             inicio = inicio,
             atual = atual,
@@ -47,7 +47,7 @@ object MetaComposicaoRules {
     }
 
     /** Calcula o progresso a partir das avaliações do aluno; null se a métrica não tem medida. */
-    fun progresso(meta: MetaComposicao, avaliacoes: List<br.com.fitpersonal.app.domain.model.AvaliacaoFisica>): ProgressoMeta? {
+    fun progresso(meta: MetaComposicao, avaliacoes: List<br.com.fitpersonal.app.domain.model.AvaliacaoFisica>): ProgressoComposicao? {
         val serie = EvolucaoRules.serie(avaliacoes, meta.metrica)
         val primeiro = serie.firstOrNull() ?: return null
         val ultimo = serie.last()

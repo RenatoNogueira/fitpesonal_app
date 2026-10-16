@@ -7,7 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import br.com.fitpersonal.app.domain.rules.MetaComposicao
 import br.com.fitpersonal.app.domain.rules.MetaComposicaoRules
-import br.com.fitpersonal.app.domain.rules.ProgressoMeta
+import br.com.fitpersonal.app.domain.rules.ProgressoComposicao
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -246,7 +246,7 @@ private fun CartaoMedida(
     valor: Double,
     antes: Double?,
     serie: List<Double>,
-    progresso: ProgressoMeta? = null,
+    progresso: ProgressoComposicao? = null,
     dicaMeta: Boolean = false,
     onClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
