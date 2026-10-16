@@ -143,6 +143,16 @@ class Repositorio(ctx: Context) {
     fun sessoesDe(treinoId: String): List<SessaoRef> =
         sessoes().filter { it.treinoId == treinoId }.sortedByDescending { it.data }
 
+    /** O que o aluno fez neste exercício nas sessões passadas do treino, da mais recente para a mais antiga. */
+    fun historicoDoExercicio(treinoId: String, exercicio: String): List<br.com.fitpersonal.app.domain.rules.RegistroExercicio> {
+        val chave = br.com.fitpersonal.app.domain.rules.CargaRules.chaveExercicio(exercicio)
+        return sessoesDe(treinoId).mapNotNull { sessao ->
+            sessao.itens
+                .firstOrNull { br.com.fitpersonal.app.domain.rules.CargaRules.chaveExercicio(it.exercicio) == chave }
+                ?.let { br.com.fitpersonal.app.domain.rules.RegistroExercicio(it.cargaKg, it.feito, sessao.esforco) }
+        }
+    }
+
     fun registrar(s: SessaoRef) {
         val arr = JSONArray()
         (sessoes() + s).forEach { arr.put(escreverSessao(it)) }

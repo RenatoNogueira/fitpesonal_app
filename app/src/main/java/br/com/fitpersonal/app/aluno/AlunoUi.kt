@@ -1,6 +1,7 @@
 package br.com.fitpersonal.app.aluno
 
 import br.com.fitpersonal.app.R
+import androidx.compose.ui.text.font.FontWeight
 import br.com.fitpersonal.app.ui.common.acompanharArrasto
 import br.com.fitpersonal.app.ui.common.efeitoElastico
 import br.com.fitpersonal.app.ui.common.rememberArrastoHorizontal
@@ -815,12 +816,21 @@ private fun ExecutarTreino(
                 items(lista.size, key = { "$divisao$it" }) { idx ->
                     val e = lista[idx]
                     val chave = "$divisao$idx"
+                    // Histórico do aluno neste exercício: última carga usada e sugestão de progressão.
+                    val historico = remember(treinoId, e.nome) { repo.historicoDoExercicio(treinoId, e.nome) }
+                    val sugestao = remember(historico) { br.com.fitpersonal.app.domain.rules.ProgressaoRules.sugerir(historico) }
+                    val padrao = remember(historico, e) {
+                        br.com.fitpersonal.app.domain.rules.ProgressaoRules.ultimaCarga(historico)
+                            ?.let { br.com.fitpersonal.app.domain.rules.ProgressaoRules.formatarKg(it) }
+                            ?: cargaInicial(e)
+                    }
                     CartaoExercicio(
                         numero = idx + 1,
                         cor = corDivisao,
                         e = e,
                         feito = feitos[chave] == true,
-                        carga = cargas[chave] ?: cargaInicial(e),
+                        carga = cargas[chave] ?: padrao,
+                        sugestao = sugestao,
                         onFeito = { feitos[chave] = it },
                         videoLocal = remember(treinoId, e.nome) { repo.videoDe(treinoId, e.nome) },
                         onAssistir = { assistindo = it },
@@ -848,7 +858,11 @@ private fun ExecutarTreino(
                         confirmandoSaida = false
                         val itens = lista.mapIndexed { idx, e ->
                             val chave = "$divisao$idx"
-                            val kg = (cargas[chave] ?: cargaInicial(e)).replace(',', '.').toDoubleOrNull()
+                            val padraoSalvar = br.com.fitpersonal.app.domain.rules.ProgressaoRules
+                                .ultimaCarga(repo.historicoDoExercicio(treinoId, e.nome))
+                                ?.let { br.com.fitpersonal.app.domain.rules.ProgressaoRules.formatarKg(it) }
+                                ?: cargaInicial(e)
+                            val kg = (cargas[chave] ?: padraoSalvar).replace(',', '.').toDoubleOrNull()
                             ItemSessao(
                                 exercicio = e.nome,
                                 cargaKg = kg?.takeIf { it > 0 && it <= 2000 },
@@ -929,6 +943,7 @@ private fun CartaoExercicio(
     onFeito: (Boolean) -> Unit,
     onCarga: (String) -> Unit,
     onDescanso: (Int) -> Unit,
+    sugestao: br.com.fitpersonal.app.domain.rules.SugestaoCarga? = null,
     videoLocal: java.io.File? = null,
     onAssistir: (java.io.File) -> Unit = {},
 ) {
@@ -983,6 +998,31 @@ private fun CartaoExercicio(
                 )
                 FilledTonalIconButton(onClick = { onCarga(ajustarCarga(carga, 1.0)) }) {
                     Icon(Icons.Filled.Add, contentDescription = "Aumentar carga")
+                }
+            }
+
+            // Progressão automática: só aparece se a carga atual ainda não é a sugerida.
+            if (sugestao != null && carga.replace(',', '.').toDoubleOrNull() != sugestao.cargaKg) {
+                val texto = br.com.fitpersonal.app.domain.rules.ProgressaoRules.formatarKg(sugestao.cargaKg)
+                Surface(
+                    onClick = { onCarga(texto) },
+                    shape = MaterialTheme.shapes.medium,
+                    color = MaterialTheme.colorScheme.tertiaryContainer,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
+                        Text(
+                            "Sugestão: subir para $texto kg",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Text(
+                            sugestao.motivo + " Toque para usar.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        )
+                    }
                 }
             }
 
