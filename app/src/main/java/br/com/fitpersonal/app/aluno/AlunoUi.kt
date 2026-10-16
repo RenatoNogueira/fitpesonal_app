@@ -159,7 +159,7 @@ private fun corDe(indice: Int): Color = CoresDivisao[indice.mod(CoresDivisao.siz
 
 /** Faixa de topo em degradê da marca, com título, subtítulo e conteúdo opcional (pílulas, progresso). */
 @Composable
-private fun Cabecalho(
+internal fun Cabecalho(
     titulo: String,
     subtitulo: String?,
     modifier: Modifier = Modifier,
@@ -249,6 +249,7 @@ private sealed interface Tela {
     data object Lista : Tela
     data class Executar(val treinoId: String) : Tela
     data class Historico(val treinoId: String) : Tela
+    data object Diario : Tela
 }
 
 @Composable
@@ -296,6 +297,7 @@ fun AlunoApp(
                         versao = versao,
                         onAbrir = { tela = Tela.Executar(it) },
                         onHistorico = { tela = Tela.Historico(it) },
+                        onDiario = { tela = Tela.Diario },
                         onMudou = { versao++ },
                         onMensagem = { msg -> versaoMensagem = msg },
                         onTrocarModo = onTrocarModo,
@@ -313,6 +315,10 @@ fun AlunoApp(
                         repo = repo,
                         treinoId = t.treinoId,
                         onVoltar = { tela = Tela.Lista },
+                    )
+                    Tela.Diario -> DiarioRefeicoes(
+                        onVoltar = { tela = Tela.Lista; versao++ },
+                        onMensagem = { msg -> versaoMensagem = msg },
                     )
                 }
             }
@@ -338,6 +344,7 @@ private fun ListaTreinos(
     versao: Int,
     onAbrir: (String) -> Unit,
     onHistorico: (String) -> Unit,
+    onDiario: () -> Unit,
     onMudou: () -> Unit,
     onMensagem: (String) -> Unit,
     onTrocarModo: () -> Unit,
@@ -396,6 +403,7 @@ private fun ListaTreinos(
                     verticalArrangement = Arrangement.spacedBy(14.dp),
                 ) {
                     item(key = "habitos") { CartaoHabitos() }
+                    item(key = "diario") { CartaoDiario(onAbrir = onDiario, versao = versao) }
                     items(treinos.size, key = { treinos[it].treinoId }) { i ->
                         val t = treinos[i]
                         val feitas = remember(versao, t.treinoId) { repo.sessoesDe(t.treinoId).size }

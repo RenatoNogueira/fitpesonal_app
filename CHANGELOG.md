@@ -2,6 +2,15 @@
 
 Formato: [versão] — data — resumo. A versão do app fica em `gradle.properties` (`versionName` / `versionCode`).
 
+## [Não lançado]
+- Arquivos próprios: .fittreino, .fittreinopack e .fitbak (os antigos .rjetreino, .rjetreinopack e .rjebak continuam abrindo).
+- Painel de composição corporal (anel gordura x massa magra, variação e tendência) na avaliação e no treino.
+- Metas de composição por aluno, com progresso no painel (banco v12).
+- Aluno: progressão automática de carga (sugestão), hábitos diários, check-in semanal (segue no resumo) e diário de refeições com fotos.
+- Treinos avançados: bi-set, circuito, AMRAP, EMOM e drop-set (banco v13; campo opcional "metodo" no contrato, gravado só quando existe).
+- Interface: efeito elástico nas listas, arrasto que acompanha o dedo, prévia do PDF mais leve e com botões no topo.
+- iPhone: o campo "metodo" ainda não é lido pelo leitor Swift (treinos com método podem falhar na conferência de integridade até atualizar o ContratoRJE.swift).
+
 ## [0.9.0] — 2026-10-15 — versão de testes
 Primeira versão versionada. Reúne tudo o que foi desenvolvido até aqui:
 

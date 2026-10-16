@@ -4,4 +4,5 @@
     <cache-path name="camera" path="camera/" />
     <cache-path name="export" path="export/" />
     <files-path name="videos" path="videos/" />
+    <files-path name="refeicoes" path="refeicoes_aluno/" />
 </paths>
