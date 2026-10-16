@@ -832,6 +832,8 @@ private fun ExecutarTreino(
                         feito = feitos[chave] == true,
                         carga = cargas[chave] ?: padrao,
                         sugestao = sugestao,
+                        metodo = br.com.fitpersonal.app.domain.rules.MetodoTreino.de(e.metodo),
+                        bloco = br.com.fitpersonal.app.domain.rules.MetodoRules.posicaoNoBloco(lista.map { it.metodo }, idx),
                         onFeito = { feitos[chave] = it },
                         videoLocal = remember(treinoId, e.nome) { repo.videoDe(treinoId, e.nome) },
                         onAssistir = { assistindo = it },
@@ -945,6 +947,9 @@ private fun CartaoExercicio(
     onCarga: (String) -> Unit,
     onDescanso: (Int) -> Unit,
     sugestao: br.com.fitpersonal.app.domain.rules.SugestaoCarga? = null,
+    metodo: br.com.fitpersonal.app.domain.rules.MetodoTreino? = null,
+    /** Posição e tamanho do bloco de bi-set/circuito a que o exercício pertence. */
+    bloco: Pair<Int, Int>? = null,
     videoLocal: java.io.File? = null,
     onAssistir: (java.io.File) -> Unit = {},
 ) {
@@ -976,6 +981,17 @@ private fun CartaoExercicio(
                         e.repeticoes?.let { Etiqueta("$it reps") }
                         e.descanso?.let { Etiqueta("descanso $it") }
                     }
+                    if (metodo != null) {
+                        Etiqueta(
+                            if (bloco != null) metodo.rotulo + " " + bloco.first + " de " + bloco.second else metodo.rotulo,
+                            cor = MaterialTheme.colorScheme.tertiary,
+                        )
+                        Text(
+                            metodo.explicacao,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
                     e.obs?.takeIf { it.isNotBlank() }?.let {
                         Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
@@ -1001,6 +1017,8 @@ private fun CartaoExercicio(
                     Icon(Icons.Filled.Add, contentDescription = "Aumentar carga")
                 }
             }
+
+            if (metodo != null && metodo.cronometrado) CronometroMetodo(metodo)
 
             // Progressão automática: só aparece se a carga atual ainda não é a sugerida.
             if (sugestao != null && carga.replace(',', '.').toDoubleOrNull() != sugestao.cargaKg) {

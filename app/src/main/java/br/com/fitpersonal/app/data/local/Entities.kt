@@ -151,6 +151,8 @@ data class ModeloExercicioEntity(
     val observacoes: String?,
     /** Link de vídeo de demonstração (http/https). */
     val video: String? = null,
+    /** Método de execução (id de MetodoTreino); null = série normal. */
+    val metodo: String? = null,
 )
 
 @Entity(
@@ -187,6 +189,8 @@ data class ExercicioTreinoEntity(
     val observacoes: String?,
     /** Link de vídeo de demonstração (http/https). */
     val video: String? = null,
+    /** Método de execução (id de MetodoTreino); null = série normal. */
+    val metodo: String? = null,
 )
 
 /** Catálogo normalizado (desktop guardava JSON bruto + LIKE). Busca por LIKE nas colunas; FTS pode vir depois. */

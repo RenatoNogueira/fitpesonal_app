@@ -63,7 +63,7 @@ class ContratoService @Inject constructor(
                 ExercicioRef(
                     nome = it.nome.trim().ifEmpty { "Exercício" },
                     series = it.series, repeticoes = it.repeticoes, carga = it.carga,
-                    descanso = it.descanso, obs = it.observacoes, video = it.video,
+                    descanso = it.descanso, obs = it.observacoes, video = it.video, metodo = it.metodo,
                 )
             }
         }

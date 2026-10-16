@@ -45,6 +45,8 @@ data class ExercicioRef(
     val catalogoId: String? = null,
     /** Link (http/https) de vídeo de demonstração; só é gravado no arquivo quando existe. */
     val video: String? = null,
+    /** Método de execução (BISET, CIRCUITO, AMRAP, EMOM, DROPSET); só é gravado no arquivo quando existe. */
+    val metodo: String? = null,
 )
 
 /** [divisoes] usa as chaves "A".."D"; divisões vazias podem ser omitidas. */
@@ -214,6 +216,7 @@ object ContratoJson {
                     .str("catalogoId", e.catalogoId)
                 // Campo opcional: ausente quando nulo, para não alterar o checksum de arquivos sem vídeo.
                 if (e.video != null) item.str("video", e.video)
+                if (e.metodo != null) item.str("metodo", e.metodo)
                 item.fecharObjeto()
             }
             w.fecharLista()
@@ -404,6 +407,8 @@ object ContratoJson {
             val m = v.lowercase()
             (m.startsWith("http://") || m.startsWith("https://")) && v.none { it.isWhitespace() }
         },
+        // Texto livre de até 20 caracteres: um método novo de versão futura passa intacto (o checksum continua batendo).
+        metodo = textoOpc(o, "metodo", 20),
     )
 
     private fun sessao(o: JSONObject): SessaoRef {

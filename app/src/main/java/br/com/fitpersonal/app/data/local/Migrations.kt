@@ -156,3 +156,11 @@ val MIGRATION_11_12 = object : Migration(11, 12) {
         )
     }
 }
+
+/** v12 → v13: método de execução do exercício (bi-set, circuito, AMRAP, EMOM, drop-set). */
+val MIGRATION_12_13 = object : Migration(12, 13) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE exercicios_treino ADD COLUMN metodo TEXT")
+        db.execSQL("ALTER TABLE exercicios_modelo ADD COLUMN metodo TEXT")
+    }
+}

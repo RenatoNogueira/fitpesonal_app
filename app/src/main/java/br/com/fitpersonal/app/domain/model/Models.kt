@@ -135,6 +135,8 @@ data class ExercicioTreino(
     val observacoes: String? = null,
     /** Link de vídeo de demonstração (http/https, já normalizado por VideoRules). */
     val video: String? = null,
+    /** Método de execução (id de MetodoTreino: BISET, CIRCUITO, AMRAP, EMOM, DROPSET); null = série normal. */
+    val metodo: String? = null,
 )
 
 data class ExercicioCatalogo(

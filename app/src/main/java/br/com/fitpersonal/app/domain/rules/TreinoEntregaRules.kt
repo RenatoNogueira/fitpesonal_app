@@ -78,6 +78,7 @@ object TreinoEntregaRules {
     }
 
     private fun detalhes(e: ExercicioTreino): List<String> = listOfNotNull(
+        MetodoTreino.de(e.metodo)?.rotulo,
         e.series?.takeIf { it.isNotBlank() }?.let { "$it séries" },
         e.repeticoes?.takeIf { it.isNotBlank() }?.let { "$it reps" },
         e.carga?.takeIf { it.isNotBlank() }?.let { "carga $it" },

@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.material3.FilterChip
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.background
@@ -281,7 +282,10 @@ fun TreinoEditorScreen(
                             CartaoItem(
                                 onClick = { dialogo = d.uid to d.ex },
                                 titulo = d.ex.nome,
-                                subtitulo = TreinoRules.resumo(d.ex).takeIf { it.isNotEmpty() },
+                                subtitulo = listOfNotNull(
+                                    br.com.fitpersonal.app.domain.rules.MetodoTreino.de(d.ex.metodo)?.rotulo,
+                                    TreinoRules.resumo(d.ex).takeIf { it.isNotEmpty() },
+                                ).joinToString(" • ").takeIf { it.isNotEmpty() },
                                 inicio = {
                                     Box(
                                         Modifier.size(36.dp).clip(CircleShape).background(corDaDivisao.copy(alpha = 0.16f)),
@@ -597,6 +601,7 @@ private fun ExercicioDialog(
     var descanso by remember { mutableStateOf(inicial.descanso.orEmpty()) }
     var obs by remember { mutableStateOf(inicial.observacoes.orEmpty()) }
     var video by remember { mutableStateOf(inicial.video.orEmpty()) }
+    var metodo by remember { mutableStateOf(inicial.metodo) }
     var divisao by remember { mutableStateOf(inicial.divisao) }
     var erro by remember { mutableStateOf<String?>(null) }
     val novo = inicial.nome.isEmpty()
@@ -611,6 +616,7 @@ private fun ExercicioDialog(
                 nome = nome.trim(), series = series.ou(), repeticoes = reps.ou(), carga = carga.ou(),
                 descanso = descanso.ou(), observacoes = obs.ou(), divisao = divisao,
                 video = br.com.fitpersonal.app.domain.rules.VideoRules.normalizar(video),
+                metodo = metodo,
             ),
         )
     }
@@ -678,6 +684,22 @@ private fun ExercicioDialog(
                                 )
                             }
                         }
+                    }
+
+                    // Método de execução: bi-set e circuito agrupam exercícios vizinhos com o mesmo método
+                    Text("Método", style = MaterialTheme.typography.labelLarge)
+                    Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        FilterChip(selected = metodo == null, onClick = { metodo = null }, label = { Text("Normal") })
+                        br.com.fitpersonal.app.domain.rules.MetodoTreino.entries.forEach { m ->
+                            FilterChip(selected = metodo == m.id, onClick = { metodo = m.id }, label = { Text(m.rotulo) })
+                        }
+                    }
+                    br.com.fitpersonal.app.domain.rules.MetodoTreino.de(metodo)?.let {
+                        Text(
+                            it.explicacao + if (it.agrupa) " Marque o mesmo método no exercício vizinho para formar o bloco." else "",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
                     }
 
                     Text("Séries", style = MaterialTheme.typography.labelLarge)
