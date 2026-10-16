@@ -187,13 +187,13 @@ class DadosDeTeste @Inject constructor(
                 ex("Leg press 45°", DivisaoTreino.A, "3", "12", "120 kg", "60s", "Não travar os joelhos."),
                 ex("Cadeira extensora", DivisaoTreino.A, "3", "15", "35 kg", "60s", "Contração de 1s no topo."),
                 ex("Stiff com barra", DivisaoTreino.A, "3", "12", "20 kg", "75s", "Coluna neutra."),
-                ex("Supino reto", DivisaoTreino.B, "4", "10", "30 kg", "90s", "Escápulas retraídas."),
-                ex("Remada curvada", DivisaoTreino.B, "4", "10", "25 kg", "90s", "Tronco a 45°."),
+                ex("Supino reto", DivisaoTreino.B, "4", "10", "30 kg", "90s", "Escápulas retraídas.", "BISET"),
+                ex("Remada curvada", DivisaoTreino.B, "4", "10", "25 kg", "90s", "Tronco a 45°.", "BISET"),
                 ex("Desenvolvimento com halteres", DivisaoTreino.B, "3", "12", "14 kg", "60s", "Sem arquear a lombar."),
                 ex("Rosca direta", DivisaoTreino.B, "3", "12", "12 kg", "60s", "Cotovelos fixos."),
                 ex("Elevação pélvica", DivisaoTreino.C, "4", "12", "40 kg", "75s", "Pausa de 2s no topo."),
-                ex("Abdominal infra", DivisaoTreino.C, "3", "20", "corporal", "45s", "Controlar a descida."),
-                ex("Prancha isométrica", DivisaoTreino.C, "3", "45s", "corporal", "45s", "Quadril alinhado."),
+                ex("Abdominal infra", DivisaoTreino.C, "3", "20", "corporal", "45s", "Controlar a descida.", "CIRCUITO"),
+                ex("Prancha isométrica", DivisaoTreino.C, "3", "45s", "corporal", "45s", "Quadril alinhado.", "CIRCUITO"),
             ),
         )
         treinos.salvarCompleto(
@@ -202,7 +202,7 @@ class DadosDeTeste @Inject constructor(
                 ex("Supino inclinado", DivisaoTreino.A, "3", "10", "40 kg", "90s", "Evitar manobra de Valsalva."),
                 ex("Puxada frontal", DivisaoTreino.A, "3", "12", "50 kg", "75s", "Expirar ao puxar."),
                 ex("Agachamento no smith", DivisaoTreino.A, "3", "12", "40 kg", "90s", "Respiração contínua."),
-                ex("Esteira (intervalado)", DivisaoTreino.B, "1", "20 min", "", "—", "FC máxima 140 bpm."),
+                ex("Esteira (intervalado)", DivisaoTreino.B, "1", "20 min", "", "—", "FC máxima 140 bpm.", "EMOM"),
                 ex("Remada baixa", DivisaoTreino.B, "3", "12", "45 kg", "75s", "Peito aberto."),
                 ex("Elevação lateral", DivisaoTreino.B, "3", "15", "6 kg", "45s", "Sem impulso."),
             ),
@@ -291,10 +291,10 @@ class DadosDeTeste @Inject constructor(
 
     // ───────────────────────── auxiliares ─────────────────────────
 
-    private fun ex(nome: String, d: DivisaoTreino, series: String, rep: String, carga: String, descanso: String, obs: String) =
+    private fun ex(nome: String, d: DivisaoTreino, series: String, rep: String, carga: String, descanso: String, obs: String, metodo: String? = null) =
         ExercicioTreino(
             idTreino = 0, nome = nome, divisao = d, series = series, repeticoes = rep,
-            carga = carga.ifBlank { null }, descanso = descanso, observacoes = obs,
+            carga = carga.ifBlank { null }, descanso = descanso, observacoes = obs, metodo = metodo,
             video = "https://www.youtube.com/results?search_query=" +
                 java.net.URLEncoder.encode("como fazer $nome", "UTF-8"),
         )
