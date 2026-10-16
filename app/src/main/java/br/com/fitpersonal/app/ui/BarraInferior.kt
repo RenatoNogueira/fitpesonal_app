@@ -38,10 +38,16 @@ import androidx.compose.ui.unit.dp
  * vira uma cápsula na cor da marca com ícone e nome; as demais mostram só o ícone.
  */
 @Composable
-fun BarraInferior(rotaSelecionada: String?, onSelecionar: (Destino) -> Unit) {
+fun BarraInferior(
+    rotaSelecionada: String?,
+    onSelecionar: (Destino) -> Unit,
+    modifier: Modifier = Modifier,
+    /** Conteúdo que passa por trás da barra e aparece desfocado no vidro (Android 12+). */
+    fundo: br.com.fitpersonal.app.ui.common.FundoDesfocavel? = null,
+) {
     val esquema = MaterialTheme.colorScheme
     Box(
-        Modifier
+        modifier
             .fillMaxWidth()
             .navigationBarsPadding()
             .padding(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 10.dp),
@@ -49,7 +55,7 @@ fun BarraInferior(rotaSelecionada: String?, onSelecionar: (Destino) -> Unit) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .vidro(RoundedCornerShape(32.dp), elevacao = 16.dp, escuro = esquema.background.luminance() < 0.5f),
+                .vidro(RoundedCornerShape(32.dp), elevacao = 16.dp, escuro = esquema.background.luminance() < 0.5f, fundo = fundo),
         ) {
             Row(
                 Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 8.dp),

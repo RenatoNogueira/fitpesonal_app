@@ -11,7 +11,11 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Alignment
+import br.com.fitpersonal.app.ui.common.fonteDeFundo
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
@@ -136,18 +140,15 @@ fun FitNavHost() {
         }
     }
 
-    Scaffold(
-        bottomBar = {
-            // Telas de formulário ocupam a tela inteira (sem barra inferior)
-            if (Destino.entries.any { it.rota == rotaAtual }) {
-                BarraInferior(rotaSelecionada = rotaAtual, onSelecionar = { irParaAba(it) })
-            }
-        },
-    ) { padding ->
+    // A barra flutua POR CIMA do conteúdo (que rola por baixo dela); o vidro desfoca o que passa atrás.
+    val fundoBarra = br.com.fitpersonal.app.ui.common.rememberFundoDesfocavel()
+    Scaffold { padding ->
+      Box(Modifier.padding(padding).fillMaxSize()) {
+        Box(Modifier.fillMaxSize().fonteDeFundo(fundoBarra)) {
         NavHost(
             nav,
             startDestination = Destino.INICIO.rota,
-            modifier = Modifier.padding(padding).efeitoElastico().gestoEntreAbas(
+            modifier = Modifier.fillMaxSize().efeitoElastico().gestoEntreAbas(
                 habilitado = rotaAtual in ROTAS_ABAS,
                 chave = rotaAtual,
                 onProxima = { indiceAba(rotaAtual).let { i -> if (i in 0 until Destino.entries.size - 1) irParaAba(Destino.entries[i + 1]) } },
@@ -302,5 +303,16 @@ fun FitNavHost() {
                 ),
             ) { AvaliacaoFormScreen(onVoltar = { nav.popBackStack() }) }
         }
+        }
+        // Telas de formulário ocupam a tela inteira (sem barra inferior)
+        if (Destino.entries.any { it.rota == rotaAtual }) {
+            BarraInferior(
+                rotaSelecionada = rotaAtual,
+                onSelecionar = { irParaAba(it) },
+                modifier = Modifier.align(Alignment.BottomCenter),
+                fundo = fundoBarra,
+            )
+        }
+      }
     }
 }

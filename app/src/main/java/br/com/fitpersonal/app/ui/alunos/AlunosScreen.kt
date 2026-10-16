@@ -58,6 +58,7 @@ fun AlunosScreen(
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = onNovo,
+                modifier = Modifier.padding(bottom = 72.dp),   // acima da barra de vidro flutuante
                 icon = { Icon(Icons.Filled.Add, contentDescription = null) },
                 text = { Text("Novo aluno") },
             )

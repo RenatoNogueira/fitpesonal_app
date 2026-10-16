@@ -56,6 +56,7 @@ fun AvaliacoesScreen(
             selecionado?.let { id ->
                 ExtendedFloatingActionButton(
                     onClick = { onNova(id) },
+                    modifier = Modifier.padding(bottom = 72.dp),   // acima da barra de vidro flutuante
                     icon = { Icon(Icons.Filled.Add, contentDescription = null) },
                     text = { Text("Nova avaliação") },
                 )

@@ -111,10 +111,11 @@ fun AgendaScreen(
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
-        snackbarHost = { SnackbarHost(snackbar) },
+        snackbarHost = { SnackbarHost(snackbar, Modifier.padding(bottom = 72.dp)) },
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = { onNovo(dia) },
+                modifier = Modifier.padding(bottom = 72.dp),   // acima da barra de vidro flutuante
                 icon = { Icon(Icons.Filled.Add, contentDescription = null) },
                 text = { Text("Agendar") },
             )
