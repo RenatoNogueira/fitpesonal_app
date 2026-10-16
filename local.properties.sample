@@ -1,0 +1,7 @@
+## Copie este arquivo para "local.properties" (que é ignorado pelo Git) e preencha.
+## O Android Studio já gera o local.properties com sdk.dir; apenas acrescente a linha abaixo.
+##
+## Chave gratuita em https://openweathermap.org/api (plano "Current Weather").
+## ATENÇÃO: a chave vai embutida no APK e pode ser extraída. Use uma chave dedicada a este app,
+## com limite de uso baixo, e troque-a se for exposta.
+OPENWEATHER_API_KEY=

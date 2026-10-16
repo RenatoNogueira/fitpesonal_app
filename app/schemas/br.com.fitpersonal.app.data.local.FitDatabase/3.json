@@ -1,0 +1,692 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 3,
+    "identityHash": "957378787258de634b4477bc6306f7cc",
+    "entities": [
+      {
+        "tableName": "alunos",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nome` TEXT NOT NULL, `dataNascimento` TEXT, `sexo` TEXT, `telefone` TEXT, `email` TEXT, `cpf` TEXT, `cep` TEXT, `instagram` TEXT, `objetivo` TEXT, `observacoesMedicas` TEXT, `fotoPerfil` TEXT, `dataCadastro` TEXT NOT NULL, `consentimentoLgpdEm` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nome",
+            "columnName": "nome",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dataNascimento",
+            "columnName": "dataNascimento",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sexo",
+            "columnName": "sexo",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "telefone",
+            "columnName": "telefone",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "email",
+            "columnName": "email",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "cpf",
+            "columnName": "cpf",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "cep",
+            "columnName": "cep",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "instagram",
+            "columnName": "instagram",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "objetivo",
+            "columnName": "objetivo",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "observacoesMedicas",
+            "columnName": "observacoesMedicas",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "fotoPerfil",
+            "columnName": "fotoPerfil",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "dataCadastro",
+            "columnName": "dataCadastro",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "consentimentoLgpdEm",
+            "columnName": "consentimentoLgpdEm",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_alunos_nome",
+            "unique": false,
+            "columnNames": [
+              "nome"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_alunos_nome` ON `${TABLE_NAME}` (`nome`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "agendamentos",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `idAluno` INTEGER NOT NULL, `data` TEXT NOT NULL, `horario` TEXT NOT NULL, `tipo` TEXT NOT NULL, `status` TEXT NOT NULL, FOREIGN KEY(`idAluno`) REFERENCES `alunos`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "idAluno",
+            "columnName": "idAluno",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "data",
+            "columnName": "data",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "horario",
+            "columnName": "horario",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tipo",
+            "columnName": "tipo",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_agendamentos_data",
+            "unique": false,
+            "columnNames": [
+              "data"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_agendamentos_data` ON `${TABLE_NAME}` (`data`)"
+          },
+          {
+            "name": "index_agendamentos_idAluno",
+            "unique": false,
+            "columnNames": [
+              "idAluno"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_agendamentos_idAluno` ON `${TABLE_NAME}` (`idAluno`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "alunos",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "idAluno"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "avaliacoes_fisicas",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `idAluno` INTEGER NOT NULL, `data` TEXT NOT NULL, `pesoKg` REAL, `alturaM` REAL, `percentualGordura` REAL, `massaMagraKg` REAL, `massaGordaKg` REAL, `ldl` REAL, `hdl` REAL, `pressaoSistolica` INTEGER, `pressaoDiastolica` INTEGER, `dobrasCutaneas` TEXT, `perimetros` TEXT, `anamnese` TEXT, `condicoes` TEXT NOT NULL, `historicoSaude` TEXT, `estiloVida` TEXT, `metas` TEXT, `postura` TEXT, `funcionalMobilidade` TEXT, `cardio` TEXT, `forcaResistencia` TEXT, `fotoFrente` TEXT, `fotoCostas` TEXT, `fotoLateralDir` TEXT, `fotoLateralEsq` TEXT, `protocoloDobras` TEXT, `dobraPeitoral` REAL, `dobraAxilarMedia` REAL, `dobraTriceps` REAL, `dobraSubescapular` REAL, `dobraAbdominal` REAL, `dobraSuprailiaca` REAL, `dobraCoxa` REAL, FOREIGN KEY(`idAluno`) REFERENCES `alunos`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "idAluno",
+            "columnName": "idAluno",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "data",
+            "columnName": "data",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pesoKg",
+            "columnName": "pesoKg",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "alturaM",
+            "columnName": "alturaM",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "percentualGordura",
+            "columnName": "percentualGordura",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "massaMagraKg",
+            "columnName": "massaMagraKg",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "massaGordaKg",
+            "columnName": "massaGordaKg",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "ldl",
+            "columnName": "ldl",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "hdl",
+            "columnName": "hdl",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "pressaoSistolica",
+            "columnName": "pressaoSistolica",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "pressaoDiastolica",
+            "columnName": "pressaoDiastolica",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "dobrasCutaneas",
+            "columnName": "dobrasCutaneas",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "perimetros",
+            "columnName": "perimetros",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "anamnese",
+            "columnName": "anamnese",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "condicoes",
+            "columnName": "condicoes",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "historicoSaude",
+            "columnName": "historicoSaude",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "estiloVida",
+            "columnName": "estiloVida",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "metas",
+            "columnName": "metas",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "postura",
+            "columnName": "postura",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "funcionalMobilidade",
+            "columnName": "funcionalMobilidade",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "cardio",
+            "columnName": "cardio",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "forcaResistencia",
+            "columnName": "forcaResistencia",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "fotoFrente",
+            "columnName": "fotoFrente",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "fotoCostas",
+            "columnName": "fotoCostas",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "fotoLateralDir",
+            "columnName": "fotoLateralDir",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "fotoLateralEsq",
+            "columnName": "fotoLateralEsq",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "protocoloDobras",
+            "columnName": "protocoloDobras",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "dobraPeitoral",
+            "columnName": "dobraPeitoral",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "dobraAxilarMedia",
+            "columnName": "dobraAxilarMedia",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "dobraTriceps",
+            "columnName": "dobraTriceps",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "dobraSubescapular",
+            "columnName": "dobraSubescapular",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "dobraAbdominal",
+            "columnName": "dobraAbdominal",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "dobraSuprailiaca",
+            "columnName": "dobraSuprailiaca",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "dobraCoxa",
+            "columnName": "dobraCoxa",
+            "affinity": "REAL",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_avaliacoes_fisicas_idAluno",
+            "unique": false,
+            "columnNames": [
+              "idAluno"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_avaliacoes_fisicas_idAluno` ON `${TABLE_NAME}` (`idAluno`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "alunos",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "idAluno"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "treinos",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `idAluno` INTEGER NOT NULL, `nome` TEXT NOT NULL, `objetivo` TEXT, `dataCriacao` TEXT NOT NULL, FOREIGN KEY(`idAluno`) REFERENCES `alunos`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "idAluno",
+            "columnName": "idAluno",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nome",
+            "columnName": "nome",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "objetivo",
+            "columnName": "objetivo",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "dataCriacao",
+            "columnName": "dataCriacao",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_treinos_idAluno",
+            "unique": false,
+            "columnNames": [
+              "idAluno"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_treinos_idAluno` ON `${TABLE_NAME}` (`idAluno`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "alunos",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "idAluno"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "exercicios_treino",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `idTreino` INTEGER NOT NULL, `nome` TEXT NOT NULL, `divisao` TEXT NOT NULL, `series` TEXT, `repeticoes` TEXT, `carga` TEXT, `descanso` TEXT, `observacoes` TEXT, FOREIGN KEY(`idTreino`) REFERENCES `treinos`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "idTreino",
+            "columnName": "idTreino",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nome",
+            "columnName": "nome",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "divisao",
+            "columnName": "divisao",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "series",
+            "columnName": "series",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "repeticoes",
+            "columnName": "repeticoes",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "carga",
+            "columnName": "carga",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "descanso",
+            "columnName": "descanso",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "observacoes",
+            "columnName": "observacoes",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_exercicios_treino_idTreino",
+            "unique": false,
+            "columnNames": [
+              "idTreino"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_exercicios_treino_idTreino` ON `${TABLE_NAME}` (`idTreino`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "treinos",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "idTreino"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "exercicios_catalogo",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `nome` TEXT NOT NULL, `categoria` TEXT NOT NULL, `nivel` TEXT NOT NULL, `equipamento` TEXT NOT NULL, `musculosPrimarios` TEXT NOT NULL, `musculosSecundarios` TEXT NOT NULL, `instrucoes` TEXT NOT NULL, `imagens` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nome",
+            "columnName": "nome",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "categoria",
+            "columnName": "categoria",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nivel",
+            "columnName": "nivel",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "equipamento",
+            "columnName": "equipamento",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "musculosPrimarios",
+            "columnName": "musculosPrimarios",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "musculosSecundarios",
+            "columnName": "musculosSecundarios",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "instrucoes",
+            "columnName": "instrucoes",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "imagens",
+            "columnName": "imagens",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_exercicios_catalogo_nome",
+            "unique": false,
+            "columnNames": [
+              "nome"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_exercicios_catalogo_nome` ON `${TABLE_NAME}` (`nome`)"
+          },
+          {
+            "name": "index_exercicios_catalogo_categoria",
+            "unique": false,
+            "columnNames": [
+              "categoria"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_exercicios_catalogo_categoria` ON `${TABLE_NAME}` (`categoria`)"
+          }
+        ],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '957378787258de634b4477bc6306f7cc')"
+    ]
+  }
+}

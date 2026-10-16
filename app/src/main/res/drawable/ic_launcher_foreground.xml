@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Logo FitPersonal reduzida para ficar dentro da zona segura do ícone adaptativo (66dp de 108dp). -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/logo_app"
+    android:inset="20%" />

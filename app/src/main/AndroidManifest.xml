@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Única comunicação de rede do app: consulta de clima (OpenWeather) com o nome da cidade. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Sem permissão CAMERA: a foto é feita pelo app de câmera do sistema (TakePicture). -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
+    <!-- allowBackup=false: dados de saúde (LGPD) não devem ir para o backup em nuvem do Android -->
+    <application
+        android:name=".FitApp"
+        android:allowBackup="false"
+        android:enableOnBackInvokedCallback="true"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="FitPersonal"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Fit">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.Fit.Splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Modo aluno: abrir um arquivo .fittreino / .fittreinopack (WhatsApp (os antigos .rjetreino também abrem), e-mail, arquivos) -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="content" />
+                <data android:scheme="file" />
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.fittreino" />
+                <data android:pathPattern=".*\\.fittreinopack" />
+                <data android:pathPattern=".*\\.rjetreino" />
+                <data android:pathPattern=".*\\.rjetreinopack" />
+            </intent-filter>
+
+            <!-- Modo aluno: receber pelo "Compartilhar" (arquivo ou texto com o código do treino) -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/octet-stream" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+
+        <receiver
+            android:name=".widget.AgendaWidgetReceiver"
+            android:exported="true"
+            android:label="Agenda de hoje">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/agenda_widget_info" />
+        </receiver>
+
+        <!-- WorkManager é inicializado manualmente em FitApp (com HiltWorkerFactory) -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+</manifest>
