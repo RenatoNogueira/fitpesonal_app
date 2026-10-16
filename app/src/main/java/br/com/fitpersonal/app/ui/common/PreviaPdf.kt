@@ -40,27 +40,50 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.size
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.io.File
 
-private const val MAX_PAGINAS = 12
-private const val LARGURA_PX = 1080
+private const val LARGURA_PX = 900
 
-/** Renderiza as primeiras páginas do PDF em bitmaps (null = falha ao abrir). */
-private fun renderizar(arquivo: File): List<Bitmap>? = runCatching {
-    ParcelFileDescriptor.open(arquivo, ParcelFileDescriptor.MODE_READ_ONLY).use { pfd ->
-        PdfRenderer(pfd).use { renderer ->
-            (0 until minOf(renderer.pageCount, MAX_PAGINAS)).map { i ->
-                renderer.openPage(i).use { pagina ->
-                    val escala = LARGURA_PX.toFloat() / pagina.width
-                    val bmp = Bitmap.createBitmap(LARGURA_PX, (pagina.height * escala).toInt(), Bitmap.Config.ARGB_8888)
-                    bmp.eraseColor(CorAndroid.WHITE)
-                    pagina.render(bmp, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-                    bmp
-                }
-            }
+/**
+ * Abre o PDF uma única vez e desenha cada página só quando ela aparece na tela (o PdfRenderer só
+ * deixa uma página aberta por vez, então o desenho é serializado). Sem isso, um relatório longo
+ * ocupava dezenas de MB de bitmaps de uma só vez.
+ */
+private class LeitorPdf(arquivo: File) : java.io.Closeable {
+    private val pfd = ParcelFileDescriptor.open(arquivo, ParcelFileDescriptor.MODE_READ_ONLY)
+    private val renderer = try { PdfRenderer(pfd) } catch (e: Exception) { pfd.close(); throw e }
+    private val trava = Mutex()
+
+    val paginas: Int get() = renderer.pageCount
+
+    /** Proporção altura/largura de cada página (para reservar o espaço antes de desenhar). */
+    suspend fun proporcoes(): List<Float> = trava.withLock {
+        (0 until renderer.pageCount).map { i ->
+            renderer.openPage(i).use { it.height.toFloat() / it.width.toFloat() }
         }
     }
-}.getOrNull()
+
+    suspend fun desenhar(indice: Int): Bitmap = trava.withLock {
+        renderer.openPage(indice).use { pagina ->
+            val escala = LARGURA_PX.toFloat() / pagina.width
+            val bmp = Bitmap.createBitmap(LARGURA_PX, (pagina.height * escala).toInt(), Bitmap.Config.ARGB_8888)
+            bmp.eraseColor(CorAndroid.WHITE)
+            pagina.render(bmp, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+            bmp
+        }
+    }
+
+    override fun close() {
+        runCatching { renderer.close() }
+        runCatching { pfd.close() }
+    }
+}
 
 /** Pré-visualização em tela cheia do PDF gerado, com ações de compartilhar e de enviar pelo WhatsApp. */
 @Composable
@@ -70,9 +93,12 @@ fun PreviaPdf(
     onCompartilhar: () -> Unit,
     onWhatsApp: () -> Unit,
 ) {
-    // null = renderizando; lista vazia = falha
-    val paginas by produceState<List<Bitmap>?>(initialValue = null, arquivo) {
-        value = withContext(Dispatchers.IO) { renderizar(arquivo) } ?: emptyList()
+    // null = abrindo; lista vazia = falha. O leitor fica aberto enquanto a prévia estiver na tela.
+    val leitor = remember(arquivo) { runCatching { LeitorPdf(arquivo) }.getOrNull() }
+    DisposableEffect(leitor) { onDispose { leitor?.close() } }
+    val proporcoes by produceState<List<Float>?>(initialValue = null, leitor) {
+        value = if (leitor == null) emptyList()
+        else withContext(Dispatchers.IO) { runCatching { leitor.proporcoes() }.getOrDefault(emptyList()) }
     }
 
     Dialog(onDismissRequest = onFechar, properties = DialogProperties(usePlatformDefaultWidth = false)) {
@@ -100,7 +126,7 @@ fun PreviaPdf(
                 }
 
                 Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    val lista = paginas
+                    val lista = proporcoes
                     when {
                         lista == null -> CircularProgressIndicator()
                         lista.isEmpty() -> Text(
@@ -113,18 +139,40 @@ fun PreviaPdf(
                             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 56.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp),
                         ) {
-                            itemsIndexed(lista) { i, bmp ->
-                                Image(
-                                    bitmap = bmp.asImageBitmap(),
-                                    contentDescription = "Página ${i + 1}",
-                                    contentScale = ContentScale.FillWidth,
-                                    modifier = Modifier.fillMaxWidth().background(androidx.compose.ui.graphics.Color.White),
-                                )
+                            itemsIndexed(lista) { i, proporcao ->
+                                PaginaPdf(leitor!!, i, proporcao)
                             }
                         }
                     }
                 }
             }
+        }
+    }
+}
+
+/** Uma página: reserva o espaço pela proporção e desenha o bitmap só quando entra na composição. */
+@Composable
+private fun PaginaPdf(leitor: LeitorPdf, indice: Int, proporcao: Float) {
+    val bmp by produceState<Bitmap?>(initialValue = null, leitor, indice) {
+        value = withContext(Dispatchers.IO) { runCatching { leitor.desenhar(indice) }.getOrNull() }
+    }
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .aspectRatio(1f / proporcao)
+            .background(androidx.compose.ui.graphics.Color.White),
+        contentAlignment = Alignment.Center,
+    ) {
+        val b = bmp
+        if (b != null) {
+            Image(
+                bitmap = b.asImageBitmap(),
+                contentDescription = "Página ${indice + 1}",
+                contentScale = ContentScale.FillWidth,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        } else {
+            CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp)
         }
     }
 }
