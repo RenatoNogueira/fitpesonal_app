@@ -133,6 +133,9 @@ fun FitNavHost() {
     val atual by nav.currentBackStackEntryAsState()
     val rotaAtual = atual?.destination?.route
 
+    // Estatísticas (só se o usuário aceitou): tela vista e abandono de formulários, sem ids nem textos.
+    androidx.compose.runtime.LaunchedEffect(rotaAtual) { br.com.fitpersonal.app.core.Analitica.navegou(rotaAtual) }
+
     fun irParaAba(d: Destino) {
         nav.navigate(d.rota) {
             popUpTo(nav.graph.findStartDestination().id) { saveState = true }

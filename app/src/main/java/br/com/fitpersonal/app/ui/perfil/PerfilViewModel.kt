@@ -289,6 +289,10 @@ class PerfilViewModel @Inject constructor(
         viewModelScope.launch(TratadorDeErros) { configRepo.definirBloqueio(ativo) }
     }
 
+    fun definirAnalitica(ativo: Boolean) {
+        viewModelScope.launch(TratadorDeErros) { configRepo.definirAnalitica(ativo) }
+    }
+
     fun definirBloquearCaptura(ativo: Boolean) {
         viewModelScope.launch(TratadorDeErros) { configRepo.definirBloquearCaptura(ativo) }
     }

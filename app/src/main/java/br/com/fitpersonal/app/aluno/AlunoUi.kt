@@ -273,6 +273,16 @@ fun AlunoApp(
         }
     }
     BackHandler(enabled = tela != Tela.Lista) { tela = Tela.Lista }
+    LaunchedEffect(tela) {
+        br.com.fitpersonal.app.core.Analitica.tela(
+            when (tela) {
+                Tela.Lista -> "aluno_lista"
+                is Tela.Executar -> "aluno_treino"
+                is Tela.Historico -> "aluno_historico"
+                Tela.Diario -> "aluno_diario"
+            },
+        )
+    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbar) },

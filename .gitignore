@@ -26,3 +26,6 @@ ios/**/*.xcodeproj/
 ios/**/xcuserdata/
 ios/**/DerivedData/
 ios/**/*.xcworkspace/xcuserdata/
+
+# Configuração do Firebase do projeto (cada ambiente baixa a sua do console do Firebase)
+app/google-services.json

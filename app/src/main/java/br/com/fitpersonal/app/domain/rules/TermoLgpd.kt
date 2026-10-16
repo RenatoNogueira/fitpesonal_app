@@ -10,7 +10,7 @@ data class SecaoTermo(val titulo: String, val texto: String)
  */
 object TermoLgpd {
     /** Incrementar quando o texto mudar de forma relevante: força novo aceite. */
-    const val VERSAO = 2   // v2: consulta de clima (OpenWeather) passou a usar a rede
+    const val VERSAO = 3   // v2: clima (OpenWeather) usa a rede · v3: estatísticas de uso anônimas, opcionais
 
     const val TITULO = "Privacidade e proteção de dados"
 
@@ -19,9 +19,10 @@ object TermoLgpd {
             "Seu papel e o do aplicativo",
             "Você, profissional, é o controlador dos dados dos seus alunos (LGPD, art. 5º, VI). " +
                 "O FitPersonal é apenas a ferramenta que organiza esses dados no seu aparelho. " +
-                "O aplicativo não envia dados de alunos para servidores do desenvolvedor. A única comunicação de rede é " +
-                "a consulta de clima ao serviço OpenWeather, que recebe apenas o nome da cidade informada no seu perfil " +
-                "(e a chave de acesso do aplicativo) — nenhum dado de aluno.",
+                "O aplicativo não envia dados de alunos para servidores do desenvolvedor. A comunicação de rede se resume à " +
+                "consulta de clima ao serviço OpenWeather, que recebe apenas o nome da cidade informada no seu perfil " +
+                "(e a chave de acesso do aplicativo), e às estatísticas de uso anônimas descritas abaixo, que só " +
+                "existem se você aceitar — nenhum dado de aluno é enviado.",
         ),
         SecaoTermo(
             "Quais dados são tratados",
@@ -42,6 +43,14 @@ object TermoLgpd {
                 "(Keystore). Backups são sempre criptografados com uma senha definida por você. " +
                 "As fotos ficam no armazenamento privado do aplicativo, protegido pelo sistema, mas não são " +
                 "criptografadas pelo aplicativo: mantenha o bloqueio de tela ativado.",
+        ),
+        SecaoTermo(
+            "Estatísticas de uso (opcional)",
+            "Se você aceitar, o aplicativo envia ao Firebase Analytics (Google) estatísticas anônimas de uso: quais telas " +
+                "foram abertas, quais ações foram concluídas (por exemplo, \"aluno criado\") e em qual tela alguém desistiu de " +
+                "uma tarefa. Não são enviados nomes, textos digitados, medidas, fotos, mensagens, ids de alunos nem o " +
+                "identificador de publicidade do aparelho. A escolha é sua e pode ser desfeita a qualquer momento em " +
+                "Perfil → Segurança e privacidade; sem aceite, nada é coletado.",
         ),
         SecaoTermo(
             "Compartilhamento",

@@ -50,6 +50,10 @@ data class Configuracoes(
     val syncUltimoEm: Long = 0L,
     val syncMensagem: String = "",
     val syncDispositivo: String = "",
+    /** Estatísticas de uso anônimas (opt-in): ligadas só se o usuário aceitar. */
+    val analiticaAtiva: Boolean = false,
+    /** Já foi feita a pergunta sobre estatísticas (para não repetir). */
+    val analiticaPerguntada: Boolean = false,
 )
 
 @Singleton
@@ -80,6 +84,8 @@ class ConfiguracoesRepository @Inject constructor(@ApplicationContext private va
         val syncUltimoEm = longPreferencesKey("sync_ultimo_em")
         val syncMensagem = stringPreferencesKey("sync_mensagem")
         val syncDispositivo = stringPreferencesKey("sync_dispositivo")
+        val analiticaAtiva = booleanPreferencesKey("analitica_ativa")
+        val analiticaPerguntada = booleanPreferencesKey("analitica_perguntada")
     }
 
     val config: Flow<Configuracoes> = ctx.configStore.data.map { p ->
@@ -110,7 +116,15 @@ class ConfiguracoesRepository @Inject constructor(@ApplicationContext private va
             syncUltimoEm = p[K.syncUltimoEm] ?: 0L,
             syncMensagem = p[K.syncMensagem].orEmpty(),
             syncDispositivo = p[K.syncDispositivo].orEmpty(),
+            analiticaAtiva = p[K.analiticaAtiva] ?: false,
+            analiticaPerguntada = p[K.analiticaPerguntada] ?: false,
         )
+    }
+
+    /** Guarda a escolha sobre estatísticas de uso e marca a pergunta como respondida. */
+    suspend fun definirAnalitica(ativo: Boolean) = ctx.configStore.edit {
+        it[K.analiticaAtiva] = ativo
+        it[K.analiticaPerguntada] = true
     }
 
     suspend fun definirBackupAtivo(v: Boolean) = ctx.configStore.edit { it[K.backupAtivo] = v }

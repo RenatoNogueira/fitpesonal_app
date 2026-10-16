@@ -3,6 +3,7 @@
 Formato: [versão] — data — resumo. A versão do app fica em `gradle.properties` (`versionName` / `versionCode`).
 
 ## [Não lançado]
+- Estatísticas de uso anônimas (Firebase Analytics), opt-in: telas, ações concluídas e abandono de formulários, sem dados pessoais. Ver docs/ANALYTICS.md; termo de privacidade v3.
 - Arquivos próprios: .fittreino, .fittreinopack e .fitbak (os antigos .rjetreino, .rjetreinopack e .rjebak continuam abrindo).
 - Painel de composição corporal (anel gordura x massa magra, variação e tendência) na avaliação e no treino.
 - Metas de composição por aluno, com progresso no painel (banco v12).

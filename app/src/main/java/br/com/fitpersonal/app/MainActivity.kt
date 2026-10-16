@@ -135,6 +135,7 @@ class MainActivity : ComponentActivity() {
                         UsoApp.PROFESSOR -> AppRaiz()
                     }
                     if (abertura) AberturaApp(onConcluir = { abertura = false })
+                    else br.com.fitpersonal.app.ui.lgpd.PerguntaAnalitica()
                 }
             }
         }

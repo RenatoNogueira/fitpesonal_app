@@ -291,6 +291,20 @@ fun PerfilScreen(onVoltar: () -> Unit, vm: PerfilViewModel = hiltViewModel()) {
                     }
                     Switch(checked = s.config.bloquearCapturaTela, onCheckedChange = vm::definirBloquearCaptura)
                 }
+                // Só aparece em builds com Firebase configurado; opt-in, desligado por padrão
+                if (br.com.fitpersonal.app.core.Analitica.disponivel) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Column(Modifier.weight(1f)) {
+                            Text("Ajudar a melhorar o app")
+                            Text(
+                                "Envia estatísticas de uso anônimas (telas e ações). Nunca inclui dados de alunos.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        Switch(checked = s.config.analiticaAtiva, onCheckedChange = vm::definirAnalitica)
+                    }
+                }
             }
 
             CartaoSecao(titulo = "Aparência") {

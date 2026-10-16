@@ -8,6 +8,12 @@ plugins {
     id("com.google.dagger.hilt.android")
 }
 
+// Firebase Analytics é opcional: sem app/google-services.json o app compila normalmente e a coleta fica desligada.
+// Passo a passo em docs/ANALYTICS.md.
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+}
+
 // Chave da API OpenWeather: lida de local.properties (fora do controle de versão) ou da variável de ambiente.
 // Sem chave, o app compila e o cartão de clima simplesmente não aparece.
 // (Declarada depois do bloco plugins {}, que precisa ser o primeiro comando do script.)
@@ -136,6 +142,10 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
     implementation("io.coil-kt:coil-compose:2.7.0")
+
+    // Estatísticas de uso anônimas (opt-in do usuário). Sem google-services.json o SDK fica inerte.
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
+    implementation("com.google.firebase:firebase-analytics")
 
     testImplementation("junit:junit:4.13.2")
     // org.json real na JVM (no android.jar de testes ele é um stub que não executa)

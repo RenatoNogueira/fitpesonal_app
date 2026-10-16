@@ -13,7 +13,9 @@ import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,7 +37,14 @@ class FitApp : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
         Falhas.instalar(this)
+        br.com.fitpersonal.app.core.Analitica.iniciar(this)
         runCatching { Notificador.criarCanais(this) }.onFailure { Falhas.registrar(it, contexto = "canais") }
+        // A coleta de estatísticas segue exatamente a escolha do usuário (desligada por padrão).
+        scope.launch {
+            try {
+                config.config.map { it.analiticaAtiva }.distinctUntilChanged().collect { br.com.fitpersonal.app.core.Analitica.definirAtiva(it) }
+            } catch (e: Exception) { Falhas.registrar(e, contexto = "analitica") }
+        }
         scope.launch {
             // Nada aqui pode derrubar o app: cada etapa é isolada e a falha é registrada.
             try { seeder.seedSeNecessario() } catch (e: Exception) { Falhas.registrar(e, contexto = "catalogo") }

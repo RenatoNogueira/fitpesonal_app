@@ -4,7 +4,7 @@
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
-    <!-- Única comunicação de rede do app: consulta de clima (OpenWeather) com o nome da cidade. -->
+    <!-- Rede: consulta de clima (OpenWeather, nome da cidade) e, só se o usuário aceitar, estatísticas de uso anônimas (Firebase). -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- Sem permissão CAMERA: a foto é feita pelo app de câmera do sistema (TakePicture). -->
@@ -20,6 +20,15 @@
         android:label="FitPersonal"
         android:supportsRtl="true"
         android:theme="@style/Theme.Fit">
+
+        <!-- Estatísticas de uso (Firebase Analytics): DESLIGADAS até o usuário aceitar (Perfil/pergunta inicial).
+             Sem identificador de publicidade e sem sinais de anúncios. -->
+        <meta-data android:name="firebase_analytics_collection_enabled" android:value="false" />
+        <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
+        <meta-data android:name="google_analytics_ssaid_collection_enabled" android:value="false" />
+        <meta-data android:name="google_analytics_default_allow_ad_storage" android:value="false" />
+        <meta-data android:name="google_analytics_default_allow_ad_user_data" android:value="false" />
+        <meta-data android:name="google_analytics_default_allow_ad_personalization_signals" android:value="false" />
 
         <activity
             android:name=".MainActivity"

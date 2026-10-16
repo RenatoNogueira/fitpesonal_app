@@ -18,7 +18,10 @@ object Avisos {
     private val _fluxo = MutableSharedFlow<Aviso>(extraBufferCapacity = 16, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     val fluxo: SharedFlow<Aviso> = _fluxo.asSharedFlow()
 
-    fun sucesso(texto: String) { _fluxo.tryEmit(Aviso(texto, TipoAviso.SUCESSO)) }
+    fun sucesso(texto: String) {
+        _fluxo.tryEmit(Aviso(texto, TipoAviso.SUCESSO))
+        Analitica.acaoConcluida(texto)   // só textos fixos de sucesso; nunca dados do usuário
+    }
     fun info(texto: String) { _fluxo.tryEmit(Aviso(texto, TipoAviso.INFO)) }
     fun erro(texto: String) { _fluxo.tryEmit(Aviso(texto, TipoAviso.ERRO)) }
 
