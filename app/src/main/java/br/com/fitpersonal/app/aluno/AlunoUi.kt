@@ -1,6 +1,14 @@
 package br.com.fitpersonal.app.aluno
 
 import br.com.fitpersonal.app.R
+import br.com.fitpersonal.app.ui.common.acompanharArrasto
+import br.com.fitpersonal.app.ui.common.efeitoElastico
+import br.com.fitpersonal.app.ui.common.rememberArrastoHorizontal
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.input.pointer.pointerInput
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.launch
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -268,7 +276,14 @@ fun AlunoApp(
         snackbarHost = { SnackbarHost(snackbar) },
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { padding ->
-        Box(Modifier.padding(padding).fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+        br.com.fitpersonal.app.ui.common.SemOverscrollPadrao {
+        Box(
+            Modifier
+                .padding(padding)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .efeitoElastico(),
+        ) {
             AnimatedContent(
                 targetState = tela,
                 transitionSpec = { fadeIn(tween(160)) togetherWith fadeOut(tween(100)) },
@@ -300,6 +315,7 @@ fun AlunoApp(
                     )
                 }
             }
+        }
         }
     }
 
@@ -761,8 +777,38 @@ private fun ExecutarTreino(
                     }
                 }
             }
+            // Arrastar para o lado troca de treino (A ↔ B); a lista acompanha o dedo e volta com quique.
+            val arrasto = rememberArrastoHorizontal()
+            val escopoGesto = rememberCoroutineScope()
             LazyColumn(
-                Modifier.fillMaxSize(),
+                Modifier
+                    .fillMaxSize()
+                    .acompanharArrasto(arrasto)
+                    .pointerInput(aba, divisoes.size) {
+                        if (divisoes.size < 2) return@pointerInput
+                        var acumulado = 0f
+                        detectHorizontalDragGestures(
+                            onDragStart = { acumulado = 0f },
+                            onDragCancel = { acumulado = 0f; escopoGesto.launch { arrasto.soltar() } },
+                            onDragEnd = {
+                                val limiar = size.width * 0.25f
+                                val atual = aba.coerceIn(0, divisoes.lastIndex)
+                                val destino = when {
+                                    acumulado <= -limiar && atual < divisoes.lastIndex -> atual + 1
+                                    acumulado >= limiar && atual > 0 -> atual - 1
+                                    else -> atual
+                                }
+                                acumulado = 0f
+                                escopoGesto.launch { if (destino != atual) arrasto.zerar() else arrasto.soltar() }
+                                if (destino != atual) aba = destino
+                            },
+                            onHorizontalDrag = { change, dx ->
+                                change.consume()
+                                acumulado += dx
+                                escopoGesto.launch(start = CoroutineStart.UNDISPATCHED) { arrasto.definir(acumulado) }
+                            },
+                        )
+                    },
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
