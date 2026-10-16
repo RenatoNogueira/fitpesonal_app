@@ -1,6 +1,7 @@
 package br.com.fitpersonal.app.ui.agenda
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import br.com.fitpersonal.app.ui.common.acompanharArrasto
 import kotlinx.coroutines.launch
 import androidx.compose.ui.input.pointer.pointerInput
@@ -309,7 +310,7 @@ private fun FaixaSemana(
                 .acompanharArrasto(arrasto)
                 .pointerInput(selecionado) {
                     var acumulado = 0f
-                    androidx.compose.foundation.gestures.detectHorizontalDragGestures(
+                    detectHorizontalDragGestures(
                         onDragStart = { acumulado = 0f },
                         onDragCancel = { acumulado = 0f; escopo.launch { arrasto.soltar() } },
                         onDragEnd = {
