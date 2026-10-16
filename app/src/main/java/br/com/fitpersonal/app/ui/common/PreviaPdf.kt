@@ -90,6 +90,15 @@ fun PreviaPdf(
                     IconButton(onClick = onFechar) { Icon(Icons.Filled.Close, "Fechar") }
                 }
 
+                // Ações logo abaixo do título: sempre visíveis, mesmo que o sistema esconda a parte de baixo do diálogo.
+                Row(
+                    Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    OutlinedButton(onClick = onWhatsApp, modifier = Modifier.weight(1f)) { Text("WhatsApp") }
+                    Button(onClick = onCompartilhar, modifier = Modifier.weight(1f)) { Text("Compartilhar") }
+                }
+
                 Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
                     val lista = paginas
                     when {
@@ -101,7 +110,7 @@ fun PreviaPdf(
                         )
                         else -> LazyColumn(
                             Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(16.dp),
+                            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 56.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp),
                         ) {
                             itemsIndexed(lista) { i, bmp ->
@@ -113,16 +122,6 @@ fun PreviaPdf(
                                 )
                             }
                         }
-                    }
-                }
-
-                Surface(tonalElevation = 3.dp, color = MaterialTheme.colorScheme.surfaceContainerLow) {
-                    Row(
-                        Modifier.navigationBarsPadding().fillMaxWidth().padding(16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    ) {
-                        OutlinedButton(onClick = onWhatsApp, modifier = Modifier.weight(1f)) { Text("WhatsApp") }
-                        Button(onClick = onCompartilhar, modifier = Modifier.weight(1f)) { Text("Compartilhar") }
                     }
                 }
             }
