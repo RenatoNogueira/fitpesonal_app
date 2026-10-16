@@ -39,6 +39,14 @@ class FundoDesfocavel internal constructor(internal val camada: GraphicsLayer) {
 
     /** Sobe a cada nova gravação para o vidro redesenhar (só o vidro lê; quem grava nunca lê). */
     internal var versao by mutableIntStateOf(0)
+    /** Ligado se a gravação/desfoque falhar neste aparelho: dali em diante o vidro usa só as camadas de cor e luz. */
+    @Volatile internal var desativado = false
+
+    internal fun desativar(e: Throwable) {
+        desativado = true
+        br.com.fitpersonal.app.core.Falhas.registrar(e, contexto = "vidro: desfoque desativado")
+    }
+
     private var contador = 0
     internal fun avisarNovaGravacao() {
         contador++
@@ -56,10 +64,16 @@ fun rememberFundoDesfocavel(): FundoDesfocavel {
 fun Modifier.fonteDeFundo(fundo: FundoDesfocavel): Modifier = this
     .onGloballyPositioned { fundo.origem = it.positionInRoot() }
     .drawWithContent {
-        val tamanho = IntSize(size.width.toInt(), size.height.toInt())
-        fundo.camada.record(this, layoutDirection, tamanho) { this@drawWithContent.drawContent() }
-        drawLayer(fundo.camada)
-        fundo.avisarNovaGravacao()
+        if (fundo.desativado) {
+            drawContent()
+        } else {
+            val tamanho = IntSize(size.width.toInt(), size.height.toInt())
+            val gravou = runCatching {
+                fundo.camada.record(this, layoutDirection, tamanho) { this@drawWithContent.drawContent() }
+                drawLayer(fundo.camada)
+            }.onFailure { fundo.desativar(it) }.isSuccess
+            if (gravou) fundo.avisarNovaGravacao() else drawContent()
+        }
     }
 
 /** O desfoque de camadas exige Android 12 (API 31); antes disso o vidro usa só as camadas de cor e luz. */
@@ -97,15 +111,17 @@ fun Modifier.vidro(
         .clip(forma)
         .onGloballyPositioned { posicao = it.positionInRoot() }
         .drawWithContent {
-            if (desfocar && fundo != null) {
+            if (desfocar && fundo != null && !fundo.desativado) {
                 fundo.versao   // lido de propósito: redesenha quando o conteúdo de trás muda
-                val raio = 26.dp.toPx()
-                borrada.renderEffect = BlurEffect(raio, raio, TileMode.Clamp)
-                val tamanho = IntSize(size.width.toInt(), size.height.toInt())
-                borrada.record(this, layoutDirection, tamanho) {
-                    translate(fundo.origem.x - posicao.x, fundo.origem.y - posicao.y) { drawLayer(fundo.camada) }
-                }
-                drawLayer(borrada)
+                runCatching {
+                    val raio = 26.dp.toPx()
+                    borrada.renderEffect = BlurEffect(raio, raio, TileMode.Clamp)
+                    val tamanho = IntSize(size.width.toInt(), size.height.toInt())
+                    borrada.record(this, layoutDirection, tamanho) {
+                        translate(fundo.origem.x - posicao.x, fundo.origem.y - posicao.y) { drawLayer(fundo.camada) }
+                    }
+                    drawLayer(borrada)
+                }.onFailure { fundo.desativar(it) }
             }
             // corpo translúcido por cima do desfoque
             drawRect(Brush.verticalGradient(listOf(corpoTopo, corpoBase)))
