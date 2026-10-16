@@ -395,6 +395,7 @@ private fun ListaTreinos(
                     contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 96.dp),
                     verticalArrangement = Arrangement.spacedBy(14.dp),
                 ) {
+                    item(key = "habitos") { CartaoHabitos() }
                     items(treinos.size, key = { treinos[it].treinoId }) { i ->
                         val t = treinos[i]
                         val feitas = remember(versao, t.treinoId) { repo.sessoesDe(t.treinoId).size }
@@ -1077,6 +1078,18 @@ private fun Historico(repo: Repositorio, treinoId: String, onVoltar: () -> Unit)
     val pacote = remember(treinoId) { repo.treino(treinoId) }
     val sessoes = remember(treinoId) { repo.sessoesDe(treinoId) }
     var mensagem by remember { mutableStateOf("") }
+    var incluirHabitos by remember { mutableStateOf(true) }
+    val textoHabitos = remember {
+        val d = HabitosStore(ctx.applicationContext).ler()
+        if (d.dias.isEmpty() && d.checkins.isEmpty()) null
+        else br.com.fitpersonal.app.domain.rules.HabitosRules.textoSemana(d.dias, d.checkins, LocalDate.now())
+    }
+    /** Recado digitado + hábitos da semana, dentro do limite do contrato (2000 caracteres). */
+    fun mensagemFinal(): String? =
+        listOfNotNull(
+            mensagem.trim().ifEmpty { null },
+            textoHabitos?.takeIf { incluirHabitos },
+        ).joinToString("\n").take(2000).ifEmpty { null }
 
     val esforcos = sessoes.mapNotNull { it.esforco }
     val mediaEsforco = if (esforcos.isEmpty()) null else esforcos.average()
@@ -1179,9 +1192,19 @@ private fun Historico(repo: Repositorio, treinoId: String, onVoltar: () -> Unit)
                                     label = { Text("Recado (opcional)") },
                                     modifier = Modifier.fillMaxWidth(),
                                 )
+                                if (textoHabitos != null) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        androidx.compose.material3.Checkbox(checked = incluirHabitos, onCheckedChange = { incluirHabitos = it })
+                                        Text(
+                                            "Incluir hábitos e check-in da semana",
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                        )
+                                    }
+                                }
                                 Button(
                                     onClick = {
-                                        val r = repo.resumoDe(treinoId)?.copy(mensagem = mensagem.trim().ifEmpty { null })
+                                        val r = repo.resumoDe(treinoId)?.copy(mensagem = mensagemFinal())
                                         if (r != null) {
                                             val codigo = CodigoTexto.codificar(ContratoJson.serializar(r))
                                             val envio = Intent(Intent.ACTION_SEND).apply {
@@ -1199,7 +1222,7 @@ private fun Historico(repo: Repositorio, treinoId: String, onVoltar: () -> Unit)
                                 }
                                 OutlinedButton(
                                     onClick = {
-                                        val r = repo.resumoDe(treinoId)?.copy(mensagem = mensagem.trim().ifEmpty { null })
+                                        val r = repo.resumoDe(treinoId)?.copy(mensagem = mensagemFinal())
                                         if (r != null) {
                                             val cm = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                                             cm.setPrimaryClip(
