@@ -1,6 +1,9 @@
 package br.com.fitpersonal.app.ui.ficha
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -80,7 +83,7 @@ fun CartaoMensalidade(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Column {
+                Column(Modifier.weight(1f).padding(end = 8.dp)) {
                     Text(FinanceiroRules.formatarReais(valor), style = MaterialTheme.typography.titleLarge)
                     Text(
                         "Vence todo dia ${aluno.diaVencimento}",
@@ -137,19 +140,32 @@ fun CartaoMensalidade(
             }
 
             pagamentos.take(3).forEach { p ->
-                Row(
-                    Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                        .padding(start = 12.dp, end = 4.dp, top = 8.dp, bottom = 0.dp),
                 ) {
+                    Row(Modifier.fillMaxWidth().padding(end = 8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text(
+                            FinanceiroRules.rotuloCompetencia(p.competencia),
+                            style = MaterialTheme.typography.titleSmall,
+                            modifier = Modifier.weight(1f),
+                        )
+                        Text(
+                            FinanceiroRules.formatarReais(p.valorCentavos),
+                            style = MaterialTheme.typography.titleSmall,
+                        )
+                    }
                     Text(
-                        "${FinanceiroRules.rotuloCompetencia(p.competencia)} • " +
-                            "${FinanceiroRules.formatarReais(p.valorCentavos)} • pago em ${p.pagoEm.format(DIA_MES)}",
+                        "Pago em ${p.pagoEm.format(DIA_MES)}",
                         style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
-                    Row {
-                        TextButton(onClick = { onRecibo(p.id) }) { Text("Recibo") }
-                        TextButton(onClick = { onExcluirPagamento(p.id) }) { Text("Desfazer") }
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                        TextButton(onClick = { onRecibo(p.id) }) { Text("Recibo", maxLines = 1) }
+                        TextButton(onClick = { onExcluirPagamento(p.id) }) { Text("Desfazer", maxLines = 1) }
                     }
                 }
             }
