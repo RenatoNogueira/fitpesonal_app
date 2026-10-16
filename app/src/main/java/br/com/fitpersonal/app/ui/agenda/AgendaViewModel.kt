@@ -85,6 +85,17 @@ class AgendaViewModel @Inject constructor(
     /** Reaproveita o canal de mensagens da tela (snackbar) para avisos curtos. */
     fun avisarErro(texto: String) { _erroPdf.value = texto }
 
+    /** Exclui o agendamento direto da lista (e cancela o lembrete dele). */
+    fun excluirAgendamento(id: Long) {
+        viewModelScope.launch(TratadorDeErros) {
+            repo.buscar(id)?.let { a ->
+                repo.excluir(a)
+                lembretes.cancelar(a.id)
+                br.com.fitpersonal.app.core.Avisos.sucesso("Agendamento excluído")
+            }
+        }
+    }
+
     fun mudarStatus(id: Long, status: StatusAgendamento) {
         viewModelScope.launch(TratadorDeErros) {
             repo.mudarStatus(id, status)

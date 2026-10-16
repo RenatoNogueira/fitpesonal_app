@@ -91,6 +91,8 @@ fun AgendaScreen(
     val dia by vm.data.collectAsStateWithLifecycle()
     val itens by vm.agendamentos.collectAsStateWithLifecycle()
     var escolhendoData by remember { mutableStateOf(false) }
+    var excluindoId by remember { mutableStateOf<Long?>(null) }
+    var excluindoNome by remember { mutableStateOf("") }
 
     val pendentes = itens.count { it.status == StatusAgendamento.PENDENTE.name }
     val agora = LocalTime.now()
@@ -211,10 +213,15 @@ fun AgendaScreen(
                             StatusAgendamento.FALTOU -> br.com.fitpersonal.app.ui.common.PaletaPasta.Coral
                             StatusAgendamento.CANCELADO -> androidx.compose.ui.graphics.Color(0xFFC9D1C2)
                         }
+                        br.com.fitpersonal.app.ui.common.CartaoDeslizavel(
+                            onEditar = { onAbrir(ag.id) },
+                            onExcluir = { excluindoId = ag.id; excluindoNome = ag.nomeAluno + " às " + ag.horario },
+                            nome = "agendamento de " + ag.nomeAluno,
+                            modifier = Modifier.animateItem(),
+                        ) {
                         br.com.fitpersonal.app.ui.common.CartaoPastaItem(
                             cor = corPasta,
                             onClick = { onAbrir(ag.id) },
-                            modifier = Modifier.animateItem(),
                             inicio = {
                                 Text(
                                     ag.horario,
@@ -259,10 +266,23 @@ fun AgendaScreen(
                                 }
                             },
                         )
+                        }
                     }
                 }
             }
         }
+    }
+
+    excluindoId?.let { id ->
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { excluindoId = null },
+            title = { Text("Excluir agendamento?") },
+            text = { Text("O agendamento de " + excluindoNome + " será removido. Esta ação não pode ser desfeita.") },
+            confirmButton = {
+                TextButton(onClick = { vm.excluirAgendamento(id); excluindoId = null }) { Text("Excluir") }
+            },
+            dismissButton = { TextButton(onClick = { excluindoId = null }) { Text("Cancelar") } },
+        )
     }
 
     if (escolhendoData) {

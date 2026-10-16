@@ -49,7 +49,18 @@ class AlunosViewModel @Inject constructor(
     repo: AlunoRepository,
     avaliacoes: AvaliacaoRepository,
     private val fotos: FotoStorage,
+    private val privacidade: PrivacidadeService,
 ) : ViewModel() {
+
+    /** Exclusão definitiva (LGPD) direto da lista: registros, fotos, lembretes e cópias em cache. */
+    fun excluirAluno(a: Aluno) {
+        viewModelScope.launch(TratadorDeErros) {
+            runCatching { privacidade.excluirDefinitivamente(a.id) }
+                .onSuccess { br.com.fitpersonal.app.core.Avisos.sucesso("Aluno excluído") }
+                .onFailure { e -> br.com.fitpersonal.app.core.Avisos.erro("Não foi possível excluir: " + e.message) }
+        }
+    }
+
     private val _busca = MutableStateFlow("")
     val busca: StateFlow<String> = _busca
 

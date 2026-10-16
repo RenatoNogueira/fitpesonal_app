@@ -29,7 +29,19 @@ import javax.inject.Inject
 class AvaliacoesViewModel @Inject constructor(
     alunosRepo: AlunoRepository,
     private val avaliacaoRepo: AvaliacaoRepository,
+    private val fotoStorage: FotoStorage,
 ) : ViewModel() {
+
+    /** Exclui a avaliação direto da lista, com as fotos e a assinatura dela. */
+    fun excluirAvaliacao(a: AvaliacaoFisica) {
+        viewModelScope.launch(TratadorDeErros) {
+            avaliacaoRepo.excluir(a)
+            AvaliacaoValidator.fotosDe(a).values.forEach(fotoStorage::apagar)
+            fotoStorage.apagar(a.assinatura)
+            br.com.fitpersonal.app.core.Avisos.sucesso("Avaliação excluída")
+        }
+    }
+
 
     val alunos: StateFlow<List<Aluno>> = alunosRepo.observar("")
         .estadoSeguro(viewModelScope, emptyList())

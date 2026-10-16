@@ -23,6 +23,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -52,6 +55,7 @@ fun AlunosScreen(
     val busca by vm.busca.collectAsStateWithLifecycle()
     val filtro by vm.filtro.collectAsStateWithLifecycle()
     val resumo by vm.resumo.collectAsStateWithLifecycle()
+    var excluindo by remember { mutableStateOf<br.com.fitpersonal.app.domain.model.Aluno?>(null) }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -123,10 +127,15 @@ fun AlunosScreen(
                             is SituacaoReavaliacao.Proxima, SituacaoReavaliacao.SemAvaliacao -> br.com.fitpersonal.app.ui.common.PaletaPasta.Lima
                             else -> br.com.fitpersonal.app.ui.common.PaletaPasta.Verde
                         }
+                        br.com.fitpersonal.app.ui.common.CartaoDeslizavel(
+                            onEditar = { onAbrir(a.id) },
+                            onExcluir = { excluindo = a },
+                            nome = a.nome,
+                            modifier = Modifier.animateItem(),
+                        ) {
                         br.com.fitpersonal.app.ui.common.CartaoPastaItem(
                             cor = corPasta,
                             onClick = { onAbrir(a.id) },
-                            modifier = Modifier.animateItem(),
                             inicio = { AvatarAluno(a.nome, vm.arquivoFoto(a.fotoPerfil), tamanho = 52.dp) },
                             titulo = a.nome + if (item.aniversarioHoje) "  🎂" else "",
                             subtitulo = resumo(item),
@@ -142,14 +151,35 @@ fun AlunosScreen(
                                 if (a.consentimentoLgpdEm == null) br.com.fitpersonal.app.ui.common.EtiquetaPreta("Sem consentimento")
                             },
                         )
+                        }
                     }
                 }
             }
         }
     }
+
+    excluindo?.let { a ->
+        ConfirmarExclusaoAluno(a, onConfirmar = { vm.excluirAluno(a); excluindo = null }, onCancelar = { excluindo = null })
+    }
 }
 
 private val DATA_CURTA = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yy")
+
+@Composable
+private fun ConfirmarExclusaoAluno(aluno: br.com.fitpersonal.app.domain.model.Aluno, onConfirmar: () -> Unit, onCancelar: () -> Unit) {
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onCancelar,
+        title = { Text("Excluir aluno?") },
+        text = {
+            Text(
+                aluno.nome + " será apagado definitivamente, com avaliações, treinos, agenda, pagamentos e fotos. " +
+                    "Esta ação não pode ser desfeita.",
+            )
+        },
+        confirmButton = { androidx.compose.material3.TextButton(onClick = onConfirmar) { Text("Excluir") } },
+        dismissButton = { androidx.compose.material3.TextButton(onClick = onCancelar) { Text("Cancelar") } },
+    )
+}
 
 private fun resumo(i: AlunoItemUi): String? = listOfNotNull(
     i.aluno.dataNascimento?.let { "${ChronoUnit.YEARS.between(it, LocalDate.now())} anos" },

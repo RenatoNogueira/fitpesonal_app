@@ -25,6 +25,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -48,6 +51,7 @@ fun AvaliacoesScreen(
 ) {
     val alunos by vm.alunos.collectAsStateWithLifecycle()
     val selecionado by vm.alunoSelecionado.collectAsStateWithLifecycle()
+    var excluindo by remember { mutableStateOf<AvaliacaoFisica?>(null) }
     val avaliacoes by vm.avaliacoes.collectAsStateWithLifecycle()
 
     Scaffold(
@@ -111,20 +115,46 @@ fun AvaliacoesScreen(
                 ) {
                     // A lista vem do mais recente ao mais antigo: o "anterior" é o próximo da lista.
                     itemsIndexed(avaliacoes, key = { _, a -> a.id }) { indice, a ->
-                        ItemAvaliacao(
-                            a = a,
-                            anterior = avaliacoes.getOrNull(indice + 1),
-                            onClick = { onAbrir(a.id) },
+                        br.com.fitpersonal.app.ui.common.CartaoDeslizavel(
+                            onEditar = { onAbrir(a.id) },
+                            onExcluir = { excluindo = a },
+                            nome = "avaliação de " + a.data.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                             modifier = Modifier.animateItem(),
-                        )
+                        ) {
+                            ItemAvaliacao(
+                                a = a,
+                                anterior = avaliacoes.getOrNull(indice + 1),
+                                onClick = { onAbrir(a.id) },
+                            )
+                        }
                     }
                 }
             }
         }
     }
+
+    excluindo?.let { a ->
+        ConfirmarExclusaoAvaliacao(a, onConfirmar = { vm.excluirAvaliacao(a); excluindo = null }, onCancelar = { excluindo = null })
+    }
 }
 
 private fun Double.formatar(casas: Int = 1) = String.format(Locale("pt", "BR"), "%.${casas}f", this)
+
+@Composable
+private fun ConfirmarExclusaoAvaliacao(a: AvaliacaoFisica, onConfirmar: () -> Unit, onCancelar: () -> Unit) {
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onCancelar,
+        title = { Text("Excluir avaliação?") },
+        text = {
+            Text(
+                "A avaliação de " + a.data.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")) +
+                    " e suas fotos serão removidas. Esta ação não pode ser desfeita.",
+            )
+        },
+        confirmButton = { androidx.compose.material3.TextButton(onClick = onConfirmar) { Text("Excluir") } },
+        dismissButton = { androidx.compose.material3.TextButton(onClick = onCancelar) { Text("Cancelar") } },
+    )
+}
 
 /** Último elemento não nulo (equivalente a firstNotNullOfOrNull, de trás para frente). */
 private fun <T, R : Any> List<T>.lastNotNullOfOrNull(transform: (T) -> R?): R? {
