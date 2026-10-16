@@ -41,14 +41,14 @@ fun Modifier.vidro(
             // reflexos de cor dentro do vidro
             drawRect(
                 Brush.radialGradient(
-                    listOf(Color(0xFFD9F24F).copy(alpha = if (escuro) 0.16f else 0.30f), Color.Transparent),
+                    listOf(Color(0xFFD9F24F).copy(alpha = 0.16f), Color.Transparent),
                     center = Offset(size.width * 0.12f, size.height * 1.05f),
                     radius = size.width * 0.55f,
                 ),
             )
             drawRect(
                 Brush.radialGradient(
-                    listOf(Color(0xFF34D1BF).copy(alpha = if (escuro) 0.12f else 0.22f), Color.Transparent),
+                    listOf(Color(0xFF34D1BF).copy(alpha = 0.12f), Color.Transparent),
                     center = Offset(size.width * 0.92f, size.height * 0.05f),
                     radius = size.width * 0.5f,
                 ),

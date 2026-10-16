@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,11 +42,22 @@ import androidx.compose.ui.unit.dp
 
 /** Cores vivas dos cartões "pasta" (texto preto por cima, nos temas claro e escuro). */
 object PaletaPasta {
-    val Lima = Color(0xFFD9F24F)
-    val Verde = Color(0xFF8CEB5E)
-    val Coral = Color(0xFFFF7A5C)
-    val Teal = Color(0xFF34D1BF)
-    val Rosa = Color(0xFFFFA3C7)
+    /**
+     * Ligado no tema claro: as cores perdem um pouco de saturação e brilho (mistura com um verde-acinzentado e
+     * 6% de preto) para não "estourar" sobre o fundo claro. No tema escuro ficam as cores vivas originais.
+     * É estado do Compose: ao trocar o tema, quem lê as cores recompõe.
+     */
+    var suave: Boolean by androidx.compose.runtime.mutableStateOf(false)
+
+    private fun ajustar(c: Color): Color =
+        if (!suave) c
+        else androidx.compose.ui.graphics.lerp(androidx.compose.ui.graphics.lerp(c, Color(0xFF5E6B52), 0.18f), Color.Black, 0.06f)
+
+    val Lima: Color get() = ajustar(Color(0xFFD9F24F))
+    val Verde: Color get() = ajustar(Color(0xFF8CEB5E))
+    val Coral: Color get() = ajustar(Color(0xFFFF7A5C))
+    val Teal: Color get() = ajustar(Color(0xFF34D1BF))
+    val Rosa: Color get() = ajustar(Color(0xFFFFA3C7))
     val Preto = Color(0xFF0A0D08)
 
     /** Ponta mais clara do degradê (30% de branco). */

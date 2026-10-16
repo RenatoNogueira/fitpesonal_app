@@ -200,5 +200,8 @@ fun FitTheme(
         dark -> EscuroEsquema
         else -> ClaroEsquema
     }
+    // Cores dos cartões "pasta" mais suaves no tema claro (escrita antes do conteúdo, que só é composto depois).
+    val claro = scheme.background.luminance() >= 0.5f
+    if (br.com.fitpersonal.app.ui.common.PaletaPasta.suave != claro) br.com.fitpersonal.app.ui.common.PaletaPasta.suave = claro
     MaterialTheme(colorScheme = scheme, typography = FitTipografia, shapes = FitFormas, content = content)
 }
