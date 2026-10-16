@@ -111,13 +111,7 @@ fun ListaEsperaScreen(
             TopAppBar(
                 title = { Text("Lista de espera", style = MaterialTheme.typography.titleLarge) },
                 navigationIcon = { IconButton(onClick = onVoltar) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Voltar") } },
-            )
-        },
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = { adicionando = true },
-                icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-                text = { Text("Adicionar") },
+                actions = { IconButton(onClick = { adicionando = true }) { Icon(Icons.Filled.Add, "Adicionar à lista de espera") } },
             )
         },
     ) { padding ->

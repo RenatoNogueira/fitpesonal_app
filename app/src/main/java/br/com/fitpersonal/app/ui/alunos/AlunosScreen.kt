@@ -55,14 +55,6 @@ fun AlunosScreen(
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = onNovo,
-                modifier = Modifier.padding(bottom = 72.dp),   // acima da barra de vidro flutuante
-                icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-                text = { Text("Novo aluno") },
-            )
-        },
     ) { padding ->
         Column(Modifier.padding(padding).fillMaxSize()) {
             CabecalhoTela(
@@ -71,6 +63,7 @@ fun AlunosScreen(
                 subtitulo = if (resumo.total == 0) "Cadastre seu primeiro aluno"
                 else "${alunos.size} de ${resumo.total} aluno${if (resumo.total != 1) "s" else ""}",
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp),
+                acoes = { br.com.fitpersonal.app.ui.common.AcaoCabecalho(Icons.Filled.Add, "Novo aluno", onNovo) },
             ) {
                 LinhaPilulas(
                     listOfNotNull(

@@ -360,13 +360,6 @@ private fun ListaTreinos(
     Scaffold(
         containerColor = Color.Transparent,
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = { colando = true },
-                icon = { Icon(Icons.Filled.ContentPaste, contentDescription = null) },
-                text = { Text("Colar código") },
-            )
-        },
     ) { padding ->
         Column(Modifier.padding(padding).fillMaxSize()) {
             Cabecalho(
@@ -381,6 +374,9 @@ private fun ListaTreinos(
                     )
                 },
                 acoes = {
+                    IconButton(onClick = { colando = true }) {
+                        Icon(Icons.Filled.ContentPaste, contentDescription = "Colar código do treino", tint = Color.White)
+                    }
                     IconButton(onClick = { lembrando = true }) {
                         Icon(
                             if (lembrete.ativo) Icons.Filled.NotificationsActive else Icons.Filled.NotificationsNone,
@@ -564,7 +560,7 @@ private fun EstadoVazioLista() {
         )
         Text("Nenhum treino ainda", style = MaterialTheme.typography.titleLarge)
         PassoVazio(1, "Abra o arquivo do treino", "Toque no arquivo que seu professor enviou (WhatsApp, e-mail…).")
-        PassoVazio(2, "Ou cole o código", "Toque em \"Colar código\" e cole a mensagem completa do professor.")
+        PassoVazio(2, "Ou cole o código", "Toque no ícone de colar, no topo da tela, e cole a mensagem completa do professor.")
     }
 }
 

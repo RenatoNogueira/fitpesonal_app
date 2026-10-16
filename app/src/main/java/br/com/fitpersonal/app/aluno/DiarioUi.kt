@@ -112,13 +112,6 @@ fun DiarioRefeicoes(onVoltar: () -> Unit, onMensagem: (String) -> Unit) {
     Scaffold(
         containerColor = Color.Transparent,
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = { registrando = true },
-                icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-                text = { Text("Registrar refeição") },
-            )
-        },
     ) { padding ->
         Column(Modifier.padding(padding).fillMaxSize()) {
             Cabecalho(
@@ -130,6 +123,12 @@ fun DiarioRefeicoes(onVoltar: () -> Unit, onMensagem: (String) -> Unit) {
                         colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White),
                     ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Voltar") }
                 },
+                acoes = {
+                    IconButton(
+                        onClick = { registrando = true },
+                        colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White),
+                    ) { Icon(Icons.Filled.Add, "Registrar refeição") }
+                },
             )
             LazyColumn(
                 Modifier.fillMaxSize(),
@@ -139,7 +138,7 @@ fun DiarioRefeicoes(onVoltar: () -> Unit, onMensagem: (String) -> Unit) {
                 if (dias.isEmpty()) {
                     item {
                         Text(
-                            "Toque em \"Registrar refeição\" para anotar o que comeu. A foto é opcional e fica só neste aparelho até você enviar.",
+                            "Toque no + no topo da tela para anotar o que comeu. A foto é opcional e fica só neste aparelho até você enviar.",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )

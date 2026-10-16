@@ -65,16 +65,6 @@ fun TreinosScreen(
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
-        floatingActionButton = {
-            selecionado?.let { id ->
-                ExtendedFloatingActionButton(
-                    onClick = { onNovo(id) },
-                    modifier = Modifier.padding(bottom = 72.dp),   // acima da barra de vidro flutuante
-                    icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-                    text = { Text("Novo treino") },
-                )
-            }
-        },
     ) { padding ->
         Column(Modifier.padding(padding).fillMaxSize()) {
             val nomeAluno = alunos.firstOrNull { it.id == selecionado }?.nome
@@ -85,6 +75,7 @@ fun TreinosScreen(
                 subtitulo = nomeAluno ?: "Fichas A/B/C/D por aluno",
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp),
                 acoes = {
+                    selecionado?.let { id -> br.com.fitpersonal.app.ui.common.AcaoCabecalho(Icons.Filled.Add, "Novo treino", { onNovo(id) }) }
                     TextButton(onClick = { biblioteca = true }) {
                         Text("Modelos (${modelos.size})", color = br.com.fitpersonal.app.ui.common.PaletaPasta.Preto)
                     }

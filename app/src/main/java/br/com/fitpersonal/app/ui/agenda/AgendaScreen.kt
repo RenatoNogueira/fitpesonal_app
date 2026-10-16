@@ -112,14 +112,6 @@ fun AgendaScreen(
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         snackbarHost = { SnackbarHost(snackbar, Modifier.padding(bottom = 72.dp)) },
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = { onNovo(dia) },
-                modifier = Modifier.padding(bottom = 72.dp),   // acima da barra de vidro flutuante
-                icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-                text = { Text("Agendar") },
-            )
-        },
     ) { padding ->
         Column(Modifier.padding(padding).fillMaxSize()) {
             val concluidos = itens.count { it.status == StatusAgendamento.CONCLUIDO.name }
@@ -132,6 +124,7 @@ fun AgendaScreen(
                 subtitulo = Saudacao.dataExtensa(dia),
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp),
                 acoes = {
+                    br.com.fitpersonal.app.ui.common.AcaoCabecalho(Icons.Filled.Add, "Agendar", { onNovo(dia) })
                     IconButton(onClick = { escolhendoData = true }) {
                         Icon(
                             Icons.Filled.CalendarMonth, contentDescription = "Escolher data",
