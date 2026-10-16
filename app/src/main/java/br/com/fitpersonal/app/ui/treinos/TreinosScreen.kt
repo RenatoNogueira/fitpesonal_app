@@ -36,6 +36,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import br.com.fitpersonal.app.domain.model.ModeloTreino
+import br.com.fitpersonal.app.domain.model.Treino
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,6 +63,7 @@ fun TreinosScreen(
     val totais by vm.totais.collectAsStateWithLifecycle()
     var biblioteca by remember { mutableStateOf(false) }
     var excluindoModelo by remember { mutableStateOf<ModeloTreino?>(null) }
+    var excluindoTreino by remember { mutableStateOf<Treino?>(null) }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -132,10 +134,16 @@ fun TreinosScreen(
                             br.com.fitpersonal.app.ui.common.PaletaPasta.Teal,
                             br.com.fitpersonal.app.ui.common.PaletaPasta.Coral,
                         )[indice % 4]
+                        // Arrastar para a esquerda revela Editar e Excluir (também disponíveis como ações do TalkBack)
+                        br.com.fitpersonal.app.ui.common.CartaoDeslizavel(
+                            onEditar = { onAbrir(t.id) },
+                            onExcluir = { excluindoTreino = t },
+                            nome = t.nome,
+                            modifier = Modifier.animateItem(),
+                        ) {
                         br.com.fitpersonal.app.ui.common.CartaoPastaItem(
                             cor = corPasta,
                             onClick = { onAbrir(t.id) },
-                            modifier = Modifier.animateItem(),
                             inicio = {
                                 Box(
                                     Modifier.size(48.dp).clip(CircleShape)
@@ -152,6 +160,7 @@ fun TreinosScreen(
                                 "criado em " + t.dataCriacao.format(DATA_BR),
                             ).joinToString(" • "),
                         )
+                        }
                     }
                 }
             }
@@ -211,6 +220,18 @@ fun TreinosScreen(
                 }
             },
             confirmButton = { TextButton(onClick = { biblioteca = false }) { Text("Fechar") } },
+        )
+    }
+
+    excluindoTreino?.let { t ->
+        AlertDialog(
+            onDismissRequest = { excluindoTreino = null },
+            title = { Text("Excluir treino?") },
+            text = { Text("\"" + t.nome + "\" e todos os seus exercícios serão apagados. Esta ação não pode ser desfeita.") },
+            confirmButton = {
+                TextButton(onClick = { vm.excluirTreino(t); excluindoTreino = null }) { Text("Excluir") }
+            },
+            dismissButton = { TextButton(onClick = { excluindoTreino = null }) { Text("Cancelar") } },
         )
     }
 

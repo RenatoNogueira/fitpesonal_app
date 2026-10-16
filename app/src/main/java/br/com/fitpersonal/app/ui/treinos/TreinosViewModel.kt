@@ -25,7 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TreinosViewModel @Inject constructor(
     alunosRepo: AlunoRepository,
-    treinoRepo: TreinoRepository,
+    private val treinoRepo: TreinoRepository,
     private val modeloRepo: ModeloTreinoRepository,
 ) : ViewModel() {
 
@@ -40,6 +40,14 @@ class TreinosViewModel @Inject constructor(
                 br.com.fitpersonal.app.core.Avisos.sucesso("Treino criado a partir do modelo")
                 onCriado(id)
             }
+        }
+    }
+
+    /** Exclui o treino direto da lista (gesto de deslizar); o aviso confirma para o usuário. */
+    fun excluirTreino(t: Treino) {
+        viewModelScope.launch(TratadorDeErros) {
+            treinoRepo.excluir(t)
+            br.com.fitpersonal.app.core.Avisos.sucesso("Treino excluído")
         }
     }
 
