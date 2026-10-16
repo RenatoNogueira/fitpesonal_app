@@ -1,6 +1,9 @@
 package br.com.fitpersonal.app.ui.agenda
 
 import androidx.compose.foundation.background
+import br.com.fitpersonal.app.ui.common.acompanharArrasto
+import kotlinx.coroutines.launch
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -286,7 +289,10 @@ fun AgendaScreen(
     }
 }
 
-/** Faixa de 7 dias em torno do dia selecionado, com setas para pular uma semana. */
+/**
+ * Faixa de 7 dias em torno do dia selecionado. Arrastar para o lado pula uma semana (esquerda = próxima,
+ * direita = anterior): a faixa acompanha o dedo e volta com quique se o arrasto for curto.
+ */
 @Composable
 private fun FaixaSemana(
     selecionado: LocalDate,
@@ -294,11 +300,37 @@ private fun FaixaSemana(
     onSelecionar: (LocalDate) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val arrasto = br.com.fitpersonal.app.ui.common.rememberArrastoHorizontal()
+    val escopo = androidx.compose.runtime.rememberCoroutineScope()
     Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        IconButton(onClick = { onSelecionar(selecionado.minusWeeks(1)) }) {
-            Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Semana anterior")
-        }
-        Row(Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        Row(
+            Modifier
+                .weight(1f)
+                .acompanharArrasto(arrasto)
+                .pointerInput(selecionado) {
+                    var acumulado = 0f
+                    androidx.compose.foundation.gestures.detectHorizontalDragGestures(
+                        onDragStart = { acumulado = 0f },
+                        onDragCancel = { acumulado = 0f; escopo.launch { arrasto.soltar() } },
+                        onDragEnd = {
+                            val limiar = size.width * 0.2f
+                            val mudou = acumulado <= -limiar || acumulado >= limiar
+                            when {
+                                acumulado <= -limiar -> onSelecionar(selecionado.plusWeeks(1))
+                                acumulado >= limiar -> onSelecionar(selecionado.minusWeeks(1))
+                            }
+                            acumulado = 0f
+                            escopo.launch { if (mudou) arrasto.zerar() else arrasto.soltar() }
+                        },
+                        onHorizontalDrag = { change, dx ->
+                            change.consume()
+                            acumulado += dx
+                            escopo.launch(start = kotlinx.coroutines.CoroutineStart.UNDISPATCHED) { arrasto.definir(acumulado) }
+                        },
+                    )
+                },
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
             (-3..3).map { selecionado.plusDays(it.toLong()) }.forEach { d ->
                 val ativo = d == selecionado
                 val ehHoje = d == hoje
@@ -335,8 +367,6 @@ private fun FaixaSemana(
                 }
             }
         }
-        IconButton(onClick = { onSelecionar(selecionado.plusWeeks(1)) }) {
-            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Próxima semana")
-        }
     }
 }
+
