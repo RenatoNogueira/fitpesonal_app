@@ -71,6 +71,11 @@ class MainActivity : ComponentActivity() {
         val splash = installSplashScreen()
         splash.setKeepOnScreenCondition { !configLida }
         super.onCreate(savedInstanceState)
+        // Em celulares (menor lado < 600 dp) a tela fica em pé: na horizontal o cabeçalho, os filtros e a
+        // barra de menu ocupam quase toda a altura e a lista fica sem espaço para rolar. Tablets giram livremente.
+        if (resources.configuration.smallestScreenWidthDp < 600) {
+            requestedOrientation = android.content.pm.ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT
+        }
         repoAluno = Repositorio(applicationContext)
 
         // Capturas de tela / miniatura em "recentes" bloqueadas quando o usuário pede (dados de saúde).
