@@ -35,11 +35,19 @@ class TreinosViewModel @Inject constructor(
     /** Cria um treino novo para o aluno selecionado a partir do modelo e devolve o id (null se não deu). */
     fun aplicarModelo(idModelo: Long, onCriado: (Long) -> Unit) {
         val aluno = _alunoSelecionado.value ?: return
-        viewModelScope.launch(TratadorDeErros) { modeloRepo.aplicar(idModelo, aluno)?.let(onCriado) }
+        viewModelScope.launch(TratadorDeErros) {
+            modeloRepo.aplicar(idModelo, aluno)?.let { id ->
+                br.com.fitpersonal.app.core.Avisos.sucesso("Treino criado a partir do modelo")
+                onCriado(id)
+            }
+        }
     }
 
     fun excluirModelo(idModelo: Long) {
-        viewModelScope.launch(TratadorDeErros) { modeloRepo.excluir(idModelo) }
+        viewModelScope.launch(TratadorDeErros) {
+            modeloRepo.excluir(idModelo)
+            br.com.fitpersonal.app.core.Avisos.sucesso("Modelo excluído")
+        }
     }
 
     val alunos: StateFlow<List<Aluno>> = alunosRepo.observar("")
@@ -255,6 +263,7 @@ class TreinoFormViewModel @Inject constructor(
         val treino = base.copy(nome = s.nome.trim(), objetivo = s.objetivo.trim().ifEmpty { null })
         viewModelScope.launch(TratadorDeErros) {
             repo.salvarCompleto(treino, s.exercicios.map { it.ex })
+            br.com.fitpersonal.app.core.Avisos.salvou("Treino", novo = original == null)
             _state.update { it.copy(concluido = true, alterado = false) }
         }
     }
@@ -333,6 +342,7 @@ class TreinoFormViewModel @Inject constructor(
         val id = original?.id ?: return
         viewModelScope.launch(TratadorDeErros) {
             repo.duplicar(id)
+            br.com.fitpersonal.app.core.Avisos.sucesso("Treino duplicado")
             _state.update { it.copy(concluido = true, alterado = false) }
         }
     }
@@ -342,6 +352,7 @@ class TreinoFormViewModel @Inject constructor(
         val id = original?.id ?: return
         viewModelScope.launch(TratadorDeErros) {
             val ok = modeloRepo.salvarComoModelo(id, nome) != null
+            if (ok) br.com.fitpersonal.app.core.Avisos.sucesso("Modelo salvo na biblioteca") else br.com.fitpersonal.app.core.Avisos.erro("Não foi possível salvar o modelo")
             _state.update {
                 it.copy(mensagem = if (ok) "Modelo salvo na biblioteca" else "Não foi possível salvar o modelo")
             }
@@ -352,6 +363,7 @@ class TreinoFormViewModel @Inject constructor(
         val t = original ?: return
         viewModelScope.launch(TratadorDeErros) {
             repo.excluir(t)
+            br.com.fitpersonal.app.core.Avisos.sucesso("Treino excluído")
             _state.update { it.copy(concluido = true, alterado = false) }
         }
     }

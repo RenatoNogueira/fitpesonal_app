@@ -180,6 +180,7 @@ class AlunoFormViewModel @Inject constructor(
                 repo.salvar(r.aluno.copy(fotoPerfil = s.foto))
                 salvou = true
                 substituidas.forEach(fotos::apagar)
+                br.com.fitpersonal.app.core.Avisos.salvou("Aluno", novo = original == null)
                 _state.update { it.copy(concluido = true) }
             }
         }
@@ -192,6 +193,7 @@ class AlunoFormViewModel @Inject constructor(
             runCatching { privacidade.excluirDefinitivamente(a.id) }
                 .onSuccess {
                     salvou = true
+                    br.com.fitpersonal.app.core.Avisos.sucesso("Aluno excluído")
                     _state.update { it.copy(concluido = true) }
                 }
                 .onFailure { e -> _state.update { it.copy(mensagem = "Não foi possível excluir: ${e.message}") } }

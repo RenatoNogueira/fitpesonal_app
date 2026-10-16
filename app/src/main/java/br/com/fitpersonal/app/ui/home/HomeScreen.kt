@@ -221,7 +221,10 @@ class HomeViewModel @Inject constructor(
     )
 
     fun salvarMetasNegocio(sessoes: Int, receitaCentavos: Long) {
-        viewModelScope.launch(TratadorDeErros) { configRepo.definirMetasNegocio(sessoes, receitaCentavos) }
+        viewModelScope.launch(TratadorDeErros) {
+            configRepo.definirMetasNegocio(sessoes, receitaCentavos)
+            br.com.fitpersonal.app.core.Avisos.sucesso("Metas do mês salvas")
+        }
     }
 
     /** Mensalidades vencidas e não pagas (últimos 3 meses), maior valor em aberto primeiro. */

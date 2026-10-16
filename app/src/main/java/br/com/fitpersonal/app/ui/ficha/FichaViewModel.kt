@@ -134,16 +134,23 @@ class FichaViewModel @Inject constructor(
         viewModelScope.launch(TratadorDeErros) {
             val meta = if (metrica != null && valor != null) metrica.name to valor else null
             alunos.atualizarPlano(idAluno, meta?.first, meta?.second, reavaliacaoDias)
+            br.com.fitpersonal.app.core.Avisos.sucesso("Plano do aluno salvo")
         }
     }
 
     /** Inicia um pacote novo hoje (zera o consumo); null remove o pacote. */
     fun salvarPacote(sessoes: Int?) {
-        viewModelScope.launch(TratadorDeErros) { alunos.atualizarPacote(idAluno, sessoes, LocalDate.now()) }
+        viewModelScope.launch(TratadorDeErros) {
+            alunos.atualizarPacote(idAluno, sessoes, LocalDate.now())
+            br.com.fitpersonal.app.core.Avisos.sucesso(if (sessoes == null) "Pacote removido" else "Pacote salvo")
+        }
     }
 
     fun salvarMensalidade(centavos: Long?, dia: Int?) {
-        viewModelScope.launch(TratadorDeErros) { alunos.atualizarMensalidade(idAluno, centavos, dia) }
+        viewModelScope.launch(TratadorDeErros) {
+            alunos.atualizarMensalidade(idAluno, centavos, dia)
+            br.com.fitpersonal.app.core.Avisos.sucesso("Mensalidade salva")
+        }
     }
 
     fun registrarPagamento(competencia: YearMonth, valorCentavos: Long) {
@@ -151,10 +158,14 @@ class FichaViewModel @Inject constructor(
             pagamentos.registrar(
                 Pagamento(idAluno = idAluno, competencia = competencia, valorCentavos = valorCentavos, pagoEm = LocalDate.now())
             )
+            br.com.fitpersonal.app.core.Avisos.sucesso("Pagamento registrado")
         }
     }
 
     fun excluirPagamento(id: Long) {
-        viewModelScope.launch(TratadorDeErros) { pagamentos.excluir(id) }
+        viewModelScope.launch(TratadorDeErros) {
+            pagamentos.excluir(id)
+            br.com.fitpersonal.app.core.Avisos.sucesso("Pagamento desfeito")
+        }
     }
 }

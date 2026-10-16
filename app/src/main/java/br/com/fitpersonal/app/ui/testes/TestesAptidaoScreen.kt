@@ -87,11 +87,15 @@ class TestesAptidaoViewModel @Inject constructor(
                     observacao = observacao.trim().ifEmpty { null },
                 )
             )
+            br.com.fitpersonal.app.core.Avisos.sucesso("Teste registrado")
         }
     }
 
     fun excluir(id: Long) {
-        viewModelScope.launch(TratadorDeErros) { repo.excluir(id) }
+        viewModelScope.launch(TratadorDeErros) {
+            repo.excluir(id)
+            br.com.fitpersonal.app.core.Avisos.sucesso("Teste excluído")
+        }
     }
 }
 

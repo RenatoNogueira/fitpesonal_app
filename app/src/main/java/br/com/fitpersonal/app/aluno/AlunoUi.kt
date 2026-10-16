@@ -309,7 +309,7 @@ fun AlunoApp(
                         treinoId = t.treinoId,
                         onVoltar = { tela = Tela.Lista },
                         onHistorico = { tela = Tela.Historico(t.treinoId) },
-                        onFinalizada = { versao++; tela = Tela.Lista },
+                        onFinalizada = { versao++; tela = Tela.Lista; br.com.fitpersonal.app.core.Avisos.sucesso("Treino finalizado e salvo no histórico") },
                     )
                     is Tela.Historico -> Historico(
                         repo = repo,
@@ -322,6 +322,7 @@ fun AlunoApp(
                     )
                 }
             }
+            br.com.fitpersonal.app.ui.common.HostAvisos(Modifier.align(Alignment.TopCenter).fillMaxWidth())
         }
         }
     }

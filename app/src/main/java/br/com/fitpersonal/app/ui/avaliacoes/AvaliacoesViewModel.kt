@@ -145,6 +145,7 @@ class AvaliacaoFormViewModel @Inject constructor(
         val id = _state.value.aluno?.id ?: return
         viewModelScope.launch(TratadorDeErros) {
             if (alvo == null) metasRepo.remover(id, metrica) else metasRepo.definir(id, metrica, alvo)
+            br.com.fitpersonal.app.core.Avisos.sucesso(if (alvo == null) "Meta removida" else "Meta definida")
         }
     }
 
@@ -260,6 +261,7 @@ class AvaliacaoFormViewModel @Inject constructor(
                 repo.salvar(AvaliacaoValidator.comFotos(r.avaliacao, s.fotos).copy(assinatura = s.assinatura))
                 salvou = true
                 substituidas.forEach(fotoStorage::apagar)
+                br.com.fitpersonal.app.core.Avisos.salvou("Avaliação", novo = original == null)
                 _state.update { it.copy(concluido = true) }
             }
         }
@@ -272,6 +274,7 @@ class AvaliacaoFormViewModel @Inject constructor(
             AvaliacaoValidator.fotosDe(a).values.forEach(fotoStorage::apagar)
             fotoStorage.apagar(a.assinatura)
             salvou = true
+            br.com.fitpersonal.app.core.Avisos.sucesso("Avaliação excluída")
             _state.update { it.copy(concluido = true) }
         }
     }

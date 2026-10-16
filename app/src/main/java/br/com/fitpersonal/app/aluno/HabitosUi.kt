@@ -122,7 +122,12 @@ fun CartaoHabitos(modifier: Modifier = Modifier) {
 
     if (checkinAberto) {
         CheckInDialog(
-            onSalvar = { c -> store.registrarCheckIn(c); dados = store.ler(); checkinAberto = false },
+            onSalvar = { c ->
+                store.registrarCheckIn(c)
+                dados = store.ler()
+                checkinAberto = false
+                br.com.fitpersonal.app.core.Avisos.sucesso("Check-in da semana salvo")
+            },
             onFechar = { checkinAberto = false },
         )
     }

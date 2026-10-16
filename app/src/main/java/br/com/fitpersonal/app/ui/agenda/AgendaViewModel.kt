@@ -89,6 +89,7 @@ class AgendaViewModel @Inject constructor(
         viewModelScope.launch(TratadorDeErros) {
             repo.mudarStatus(id, status)
             repo.buscar(id)?.let { lembretes.agendar(it) }   // cancela se deixou de ser pendente
+            br.com.fitpersonal.app.core.Avisos.sucesso("Atendimento marcado como " + status.rotulo.lowercase())
         }
     }
 }
@@ -190,6 +191,7 @@ class AgendamentoFormViewModel @Inject constructor(
         viewModelScope.launch(TratadorDeErros) {
             repo.excluir(a)
             lembretes.cancelar(a.id)
+            br.com.fitpersonal.app.core.Avisos.sucesso("Agendamento excluído")
             _state.update { it.copy(concluido = true) }
         }
     }
@@ -205,6 +207,7 @@ class AgendamentoFormViewModel @Inject constructor(
         // Série semanal: só ao criar. Datas que já têm outro agendamento no horário são puladas (e avisadas).
         val total = if (original == null) _state.value.ocorrencias else 1
         if (total <= 1) {
+            br.com.fitpersonal.app.core.Avisos.salvou("Agendamento", novo = original == null)
             _state.update { it.copy(concluido = true) }
             return
         }
@@ -221,6 +224,7 @@ class AgendamentoFormViewModel @Inject constructor(
             }
         }
         if (puladas.isEmpty()) {
+            br.com.fitpersonal.app.core.Avisos.sucesso("$criadas agendamentos criados")
             _state.update { it.copy(concluido = true) }
         } else {
             val fmt = java.time.format.DateTimeFormatter.ofPattern("dd/MM")

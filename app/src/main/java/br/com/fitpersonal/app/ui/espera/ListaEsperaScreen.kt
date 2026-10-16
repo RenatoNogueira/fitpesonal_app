@@ -85,11 +85,15 @@ class ListaEsperaViewModel @Inject constructor(
                     criadoEm = LocalDate.now(),
                 )
             )
+            br.com.fitpersonal.app.core.Avisos.sucesso("Adicionado à lista de espera")
         }
     }
 
     fun remover(id: Long) {
-        viewModelScope.launch(TratadorDeErros) { repo.remover(id) }
+        viewModelScope.launch(TratadorDeErros) {
+            repo.remover(id)
+            br.com.fitpersonal.app.core.Avisos.sucesso("Removido da lista de espera")
+        }
     }
 }
 

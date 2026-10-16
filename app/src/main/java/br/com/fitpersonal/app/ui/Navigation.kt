@@ -304,6 +304,8 @@ fun FitNavHost() {
             ) { AvaliacaoFormScreen(onVoltar = { nav.popBackStack() }) }
         }
         }
+        // Feedback de "salvo / excluído": cartão no topo, sobrevive à navegação
+        br.com.fitpersonal.app.ui.common.HostAvisos(Modifier.align(Alignment.TopCenter).fillMaxWidth())
         // Telas de formulário ocupam a tela inteira (sem barra inferior)
         if (Destino.entries.any { it.rota == rotaAtual }) {
             BarraInferior(
