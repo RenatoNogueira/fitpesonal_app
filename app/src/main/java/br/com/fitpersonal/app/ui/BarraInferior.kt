@@ -5,6 +5,12 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import br.com.fitpersonal.app.ui.common.vidro
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.foundation.border
+import androidx.compose.animation.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -40,13 +46,10 @@ fun BarraInferior(rotaSelecionada: String?, onSelecionar: (Destino) -> Unit) {
             .navigationBarsPadding()
             .padding(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 10.dp),
     ) {
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(32.dp),
-            color = esquema.surfaceContainerHigh,
-            tonalElevation = 6.dp,
-            shadowElevation = 14.dp,
-            border = BorderStroke(1.dp, esquema.outlineVariant.copy(alpha = 0.6f)),
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .vidro(RoundedCornerShape(32.dp), elevacao = 16.dp, escuro = esquema.background.luminance() < 0.5f),
         ) {
             Row(
                 Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 8.dp),
@@ -64,11 +67,8 @@ fun BarraInferior(rotaSelecionada: String?, onSelecionar: (Destino) -> Unit) {
 @Composable
 private fun ItemDaBarra(destino: Destino, ativo: Boolean, onClick: () -> Unit) {
     val esquema = MaterialTheme.colorScheme
-    val fundo by animateColorAsState(
-        if (ativo) esquema.primary else Color.Transparent,
-        animationSpec = tween(180),
-        label = "fundoAba",
-    )
+    // 0 → 1: a cápsula ativa surge como uma "gota" de vidro colorido (cor da marca + brilho + borda de luz)
+    val presenca by animateFloatAsState(if (ativo) 1f else 0f, animationSpec = tween(220), label = "presencaAba")
     val conteudo by animateColorAsState(
         if (ativo) esquema.onPrimary else esquema.onSurfaceVariant,
         animationSpec = tween(180),
@@ -77,7 +77,18 @@ private fun ItemDaBarra(destino: Destino, ativo: Boolean, onClick: () -> Unit) {
     Row(
         Modifier
             .clip(RoundedCornerShape(24.dp))
-            .background(fundo)
+            .background(esquema.primary.copy(alpha = 0.92f * presenca))
+            .drawWithContent {
+                drawRect(
+                    Brush.verticalGradient(
+                        0f to Color.White.copy(alpha = 0.42f * presenca),
+                        0.55f to Color.White.copy(alpha = 0f),
+                        endY = size.height,
+                    ),
+                )
+                drawContent()
+            }
+            .border(1.dp, Color.White.copy(alpha = 0.45f * presenca), RoundedCornerShape(24.dp))
             .selectable(selected = ativo, role = Role.Tab, onClick = onClick)
             .padding(horizontal = if (ativo) 16.dp else 12.dp, vertical = 10.dp)
             .animateContentSize(animationSpec = tween(180)),
