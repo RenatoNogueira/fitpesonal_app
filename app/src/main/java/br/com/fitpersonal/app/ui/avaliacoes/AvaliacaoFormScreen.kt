@@ -396,7 +396,7 @@ private fun SecaoDobras(s: AvaliacaoFormState, vm: AvaliacaoFormViewModel) {
                     Text("Resultado — ${r.protocolo.rotulo}", style = MaterialTheme.typography.titleSmall)
                     Text("Soma das dobras: %.1f mm • Idade: %d anos".format(r.somaDobrasMm, r.idade))
                     Text("Densidade corporal: %.4f g/mL".format(r.densidadeCorporal))
-                    Text("% de gordura (Siri): %.1f%%".format(r.percentualGordura), style = MaterialTheme.typography.titleMedium)
+                    Text("%% de gordura (Siri): %.1f%%".format(r.percentualGordura), style = MaterialTheme.typography.titleMedium)
                     a.avisos.forEach {
                         Text("⚠ $it", color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
                     }
