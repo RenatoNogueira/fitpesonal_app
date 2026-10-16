@@ -35,6 +35,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import br.com.fitpersonal.app.domain.model.AvaliacaoFisica
 import br.com.fitpersonal.app.domain.model.CondicaoSaude
 import br.com.fitpersonal.app.domain.model.ProtocoloDobras
 import br.com.fitpersonal.app.domain.model.SexoBiologico
@@ -201,6 +202,28 @@ private fun PassoMedidas(s: AvaliacaoFormState, vm: AvaliacaoFormViewModel) {
         }
     }
     CartaoResumo(s.resumo)
+    br.com.fitpersonal.app.ui.evolucao.PainelComposicao(
+        atual = avaliacaoAoVivo(s),
+        historico = s.historico,
+    )
+}
+
+/** Avaliação montada com o que já foi digitado (campos inválidos ficam de fora), para o painel ao vivo. */
+private fun avaliacaoAoVivo(s: AvaliacaoFormState): AvaliacaoFisica {
+    val i = s.input
+    fun d(t: String) = AvaliacaoValidator.parseDecimal(t)
+    return AvaliacaoFisica(
+        id = Long.MAX_VALUE,
+        idAluno = s.aluno?.id ?: 0L,
+        data = AlunoValidator.parseData(i.data) ?: java.time.LocalDate.now(),
+        pesoKg = d(i.peso),
+        alturaM = d(i.altura),
+        percentualGordura = d(i.percentualGordura),
+        massaMagraKg = d(i.massaMagra) ?: s.resumo.massaMagraKg,
+        massaGordaKg = d(i.massaGorda) ?: s.resumo.massaGordaKg,
+        cinturaCm = d(i.cintura),
+        quadrilCm = d(i.quadril),
+    )
 }
 
 @Composable

@@ -57,6 +57,7 @@ fun TreinoEditorScreen(
     val ctxLocal = androidx.compose.ui.platform.LocalContext.current
     val videosMapa by vm.videos.collectAsStateWithLifecycle()
     val videoOcupado by vm.videoOcupado.collectAsStateWithLifecycle()
+    val avaliacoesAluno by vm.avaliacoes.collectAsStateWithLifecycle()
     var reproduzindo by remember { mutableStateOf<java.io.File?>(null) }
     val videosAcoes = VideosAcoes(
         mapa = videosMapa,
@@ -220,6 +221,11 @@ fun TreinoEditorScreen(
                     label = { Text("Objetivo") }, singleLine = true, modifier = Modifier.fillMaxWidth(),
                 )
             }
+
+            br.com.fitpersonal.app.ui.evolucao.ComposicaoNoTreino(
+                avaliacoes = avaliacoesAluno,
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 12.dp),
+            )
 
             // Divisões A–D: blocos coloridos com a contagem de exercícios
             Row(

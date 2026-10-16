@@ -97,6 +97,7 @@ data class TreinoFormState(
 @HiltViewModel
 class TreinoFormViewModel @Inject constructor(
     private val repo: TreinoRepository,
+    avaliacoesRepo: br.com.fitpersonal.app.data.repo.AvaliacaoRepository,
     private val modeloRepo: ModeloTreinoRepository,
     private val catalogoRepo: CatalogoRepository,
     private val relatorios: br.com.fitpersonal.app.report.RelatorioService,
@@ -138,6 +139,15 @@ class TreinoFormViewModel @Inject constructor(
     }
     private val idAlunoArg: Long = savedState.get<Long>("aluno") ?: 0L
     private var original: Treino? = null
+
+    /** Aluno dono do treino (vem do argumento ou, ao editar, do treino salvo). */
+    private val alunoDoTreino = MutableStateFlow(idAlunoArg)
+
+    /** Avaliações do aluno, para o painel de composição corporal. */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val avaliacoes: StateFlow<List<AvaliacaoFisica>> = alunoDoTreino
+        .flatMapLatest { id -> if (id == 0L) flowOf(emptyList()) else avaliacoesRepo.doAluno(id) }
+        .estadoSeguro(viewModelScope, emptyList())
     private var proximoUid = 1L
     private var jobBusca: Job? = null
 
@@ -147,6 +157,7 @@ class TreinoFormViewModel @Inject constructor(
     init {
         if (idTreino != 0L) viewModelScope.launch(TratadorDeErros) {
             original = repo.buscar(idTreino)
+            original?.let { alunoDoTreino.value = it.idAluno }
             val exs = repo.exerciciosDe(idTreino).map { ExercicioDraft(proximoUid++, it) }
             _state.update {
                 it.copy(carregando = false, nome = original?.nome.orEmpty(),

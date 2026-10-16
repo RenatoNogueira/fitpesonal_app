@@ -67,6 +67,8 @@ data class AvaliacaoFormState(
     /** Sexo usado na equação de Pollock (vem do cadastro do aluno; editável quando ausente). */
     val sexoCalculo: SexoBiologico? = null,
     val pollock: AnalisePollock = AnalisePollock.Pendente("Preencha as dobras."),
+    /** Outras avaliações salvas do aluno (sem a que está sendo editada), para o painel de composição. */
+    val historico: List<AvaliacaoFisica> = emptyList(),
 )
 
 @HiltViewModel
@@ -101,9 +103,13 @@ class AvaliacaoFormViewModel @Inject constructor(
                 val hoje = LocalDate.now()
                 AvaliacaoInput(data = "%02d%02d%04d".format(hoje.dayOfMonth, hoje.monthValue, hoje.year))
             }
+            val historico = runCatching {
+                repo.doAluno(original?.idAluno ?: idAlunoArg).first().filter { a -> a.id != idAvaliacao }
+            }.getOrDefault(emptyList())
             _state.update {
                 analisar(
                     it.copy(
+                        historico = historico,
                         carregando = false,
                         input = input,
                         fotos = original?.let(AvaliacaoValidator::fotosDe) ?: emptyMap(),
