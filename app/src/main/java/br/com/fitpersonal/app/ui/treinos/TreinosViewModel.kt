@@ -32,11 +32,6 @@ class TreinosViewModel @Inject constructor(
     val modelos: StateFlow<List<ModeloTreino>> = modeloRepo.todos
         .estadoSeguro(viewModelScope, emptyList())
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val metasAluno: StateFlow<List<br.com.fitpersonal.app.domain.rules.MetaComposicao>> = alunoDoTreino
-        .flatMapLatest { id -> if (id == 0L) flowOf(emptyList()) else metasRepo.doAluno(id) }
-        .estadoSeguro(viewModelScope, emptyList())
-
     /** Cria um treino novo para o aluno selecionado a partir do modelo e devolve o id (null se não deu). */
     fun aplicarModelo(idModelo: Long, onCriado: (Long) -> Unit) {
         val aluno = _alunoSelecionado.value ?: return
@@ -153,6 +148,11 @@ class TreinoFormViewModel @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     val avaliacoes: StateFlow<List<AvaliacaoFisica>> = alunoDoTreino
         .flatMapLatest { id -> if (id == 0L) flowOf(emptyList()) else avaliacoesRepo.doAluno(id) }
+        .estadoSeguro(viewModelScope, emptyList())
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val metasAluno: StateFlow<List<br.com.fitpersonal.app.domain.rules.MetaComposicao>> = alunoDoTreino
+        .flatMapLatest { id -> if (id == 0L) flowOf(emptyList()) else metasRepo.doAluno(id) }
         .estadoSeguro(viewModelScope, emptyList())
     private var proximoUid = 1L
     private var jobBusca: Job? = null
