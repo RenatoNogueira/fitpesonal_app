@@ -80,7 +80,7 @@ fun AppRaiz(vm: ConsentimentoViewModel = hiltViewModel()) {
             val rec: RecuperacaoViewModel = hiltViewModel()
             val info by rec.info.collectAsStateWithLifecycle()
             val pendente = info
-            if (pendente != null) RecuperacaoScreen(pendente, rec) else PortaoBloqueio { FitNavHost() }
+            if (pendente != null) RecuperacaoScreen(pendente, rec) else PortaoBloqueio { br.com.fitpersonal.app.ui.common.SemOverscrollPadrao { FitNavHost() } }
         }
     }
 }

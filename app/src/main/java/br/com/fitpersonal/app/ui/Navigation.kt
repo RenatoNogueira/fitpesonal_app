@@ -24,8 +24,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import br.com.fitpersonal.app.ui.common.acompanharArrasto
+import br.com.fitpersonal.app.ui.common.efeitoElastico
+import br.com.fitpersonal.app.ui.common.rememberArrastoHorizontal
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.launch
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -76,29 +82,44 @@ private fun indiceAba(rota: String?): Int = Destino.entries.indexOfFirst { it.ro
  * O deslocamento só conta se for predominantemente horizontal e passar do limiar; listas roláveis
  * na horizontal (chips, carrosséis) consomem o gesto antes e não disparam a troca.
  */
+@Composable
 private fun Modifier.gestoEntreAbas(
     habilitado: Boolean,
     chave: Any?,
     onProxima: () -> Unit,
     onAnterior: () -> Unit,
-): Modifier = if (!habilitado) this else pointerInput(chave) {
-    var acumulado = 0f
-    detectHorizontalDragGestures(
-        onDragStart = { acumulado = 0f },
-        onDragCancel = { acumulado = 0f },
-        onDragEnd = {
-            val limiar = size.width * 0.28f
-            when {
-                acumulado <= -limiar -> onProxima()
-                acumulado >= limiar -> onAnterior()
-            }
-            acumulado = 0f
-        },
-        onHorizontalDrag = { change, dx ->
-            change.consume()
-            acumulado += dx
-        },
-    )
+): Modifier {
+    if (!habilitado) return this
+    val arrasto = rememberArrastoHorizontal()
+    val escopo = rememberCoroutineScope()
+    return this
+        .acompanharArrasto(arrasto)
+        .pointerInput(chave) {
+            var acumulado = 0f
+            detectHorizontalDragGestures(
+                onDragStart = { acumulado = 0f },
+                onDragCancel = {
+                    acumulado = 0f
+                    escopo.launch { arrasto.soltar() }
+                },
+                onDragEnd = {
+                    val limiar = size.width * 0.28f
+                    val trocou = acumulado <= -limiar || acumulado >= limiar
+                    when {
+                        acumulado <= -limiar -> onProxima()
+                        acumulado >= limiar -> onAnterior()
+                    }
+                    acumulado = 0f
+                    // trocou de aba: a nova tela começa parada; senão a tela volta com quique
+                    escopo.launch { if (trocou) arrasto.zerar() else arrasto.soltar() }
+                },
+                onHorizontalDrag = { change, dx ->
+                    change.consume()
+                    acumulado += dx
+                    escopo.launch(start = CoroutineStart.UNDISPATCHED) { arrasto.definir(acumulado) }
+                },
+            )
+        }
 }
 
 @Composable
@@ -126,7 +147,7 @@ fun FitNavHost() {
         NavHost(
             nav,
             startDestination = Destino.INICIO.rota,
-            modifier = Modifier.padding(padding).gestoEntreAbas(
+            modifier = Modifier.padding(padding).efeitoElastico().gestoEntreAbas(
                 habilitado = rotaAtual in ROTAS_ABAS,
                 chave = rotaAtual,
                 onProxima = { indiceAba(rotaAtual).let { i -> if (i in 0 until Destino.entries.size - 1) irParaAba(Destino.entries[i + 1]) } },
