@@ -148,7 +148,9 @@ fun CampoBusca(
         value = valor,
         onValueChange = onValorChange,
         modifier = modifier.fillMaxWidth(),
-        placeholder = { Text(placeholder) },
+        // Uma linha só: texto longo termina em "…" em vez de cortar ou crescer o campo.
+        placeholder = { Text(placeholder, maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis) },
+        textStyle = MaterialTheme.typography.bodyLarge,
         leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
         trailingIcon = {
             if (valor.isNotEmpty()) {

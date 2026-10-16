@@ -82,7 +82,7 @@ fun AlunosScreen(
             CampoBusca(
                 valor = busca,
                 onValorChange = vm::buscar,
-                placeholder = "Nome, objetivo, telefone ou e-mail",
+                placeholder = "Buscar por nome, objetivo ou contato",
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             )
             Row(
