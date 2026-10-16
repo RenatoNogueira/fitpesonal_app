@@ -31,7 +31,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!-- Modo aluno: abrir um arquivo .rjetreino / .rjetreinopack (WhatsApp, e-mail, arquivos) -->
+            <!-- Modo aluno: abrir um arquivo .fittreino / .fittreinopack (WhatsApp (os antigos .rjetreino também abrem), e-mail, arquivos) -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -39,6 +39,8 @@
                 <data android:scheme="content" />
                 <data android:scheme="file" />
                 <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.fittreino" />
+                <data android:pathPattern=".*\\.fittreinopack" />
                 <data android:pathPattern=".*\\.rjetreino" />
                 <data android:pathPattern=".*\\.rjetreinopack" />
             </intent-filter>

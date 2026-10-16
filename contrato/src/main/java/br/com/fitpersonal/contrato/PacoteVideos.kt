@@ -19,7 +19,7 @@ import java.util.zip.ZipOutputStream
  * ligados aos exercícios pelo **nome** do exercício, como aparece no treino.
  */
 object PacoteVideos {
-    const val EXTENSAO = ".rjetreinopack"
+    const val EXTENSAO = ".fittreinopack"
     const val ENTRADA_TREINO = "treino.rjetreino"
     const val ENTRADA_INDICE = "videos.json"
     const val MAX_TOTAL_BYTES = 600L * 1024 * 1024

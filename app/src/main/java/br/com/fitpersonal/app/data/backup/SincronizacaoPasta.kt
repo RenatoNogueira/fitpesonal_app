@@ -37,7 +37,7 @@ sealed interface ResultadoSync {
 /**
  * Sincronização entre aparelhos por **pasta compartilhada** (Google Drive, Dropbox, USB…), sem servidor.
  *
- * A pasta guarda um único conjunto de dados: `fitpersonal_sync.rjebak` (o mesmo backup cifrado) e
+ * A pasta guarda um único conjunto de dados: `fitpersonal_sync.fitbak` (o mesmo backup cifrado) e
  * `fitpersonal_sync.json` (versão e autor). Cada aparelho lembra a última versão que aplicou ou enviou:
  *  - pasta com versão maior e nada mudou aqui → **recebe** (substitui os dados deste aparelho);
  *  - nada mudou na pasta e algo mudou aqui → **envia** (versão + 1);
@@ -54,7 +54,7 @@ class SincronizacaoPasta @Inject constructor(
 ) {
     private companion object {
         const val PREFIXO = "fitpersonal_sync"
-        const val ARQ_DADOS = "fitpersonal_sync.rjebak"
+        const val ARQ_DADOS = "fitpersonal_sync.fitbak"
         const val ARQ_META = "fitpersonal_sync.json"
         /** Tolerância entre o horário gravado no fim da sincronização e a data dos arquivos do banco. */
         const val FOLGA_MS = 2_000L
@@ -126,7 +126,7 @@ class SincronizacaoPasta @Inject constructor(
 
     private fun ehDados(f: DocumentFile): Boolean {
         val n = f.name.orEmpty()
-        return n.startsWith(PREFIXO) && n.contains(".rjebak")
+        return n.startsWith(PREFIXO) && (n.contains(".fitbak") || n.contains(".rjebak"))
     }
 
     private fun ehMeta(f: DocumentFile): Boolean {

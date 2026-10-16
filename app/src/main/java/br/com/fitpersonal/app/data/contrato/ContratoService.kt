@@ -23,14 +23,14 @@ import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/** Treino pronto para ir ao app do aluno: arquivo `.rjetreino` e o mesmo conteúdo como código de texto. */
+/** Treino pronto para ir ao app do aluno: arquivo `.fittreino` e o mesmo conteúdo como código de texto. */
 data class PacoteGerado(
     val arquivo: File,
     val codigo: String,
     val revisao: Int,
 )
 
-/** Pacote "treino + vídeos" pronto para enviar ao aluno (arquivo `.rjetreinopack`). */
+/** Pacote "treino + vídeos" pronto para enviar ao aluno (arquivo `.fittreinopack`). */
 data class PacoteComVideosGerado(
     val arquivo: File,
     val revisao: Int,
@@ -38,7 +38,7 @@ data class PacoteComVideosGerado(
     val tamanhoBytes: Long,
 )
 
-/** Monta o `.rjetreino` de um treino salvo (gera os identificadores do contrato na primeira vez). */
+/** Monta o `.fittreino` de um treino salvo (gera os identificadores do contrato na primeira vez). */
 @Singleton
 class ContratoService @Inject constructor(
     @ApplicationContext private val ctx: Context,
@@ -86,7 +86,7 @@ class ContratoService @Inject constructor(
 
         val json = ContratoJson.serializar(pacote)
         val pasta = File(ctx.cacheDir, "pdf").apply { mkdirs() }
-        val arquivo = File(pasta, "treino_${slug(a.nome)}_${slug(t.nome)}.rjetreino")
+        val arquivo = File(pasta, "treino_${slug(a.nome)}_${slug(t.nome)}.fittreino")
         arquivo.writeText(json, Charsets.UTF_8)
         PacoteGerado(arquivo, CodigoTexto.codificar(json), revisao)
     }

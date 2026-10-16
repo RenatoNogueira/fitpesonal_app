@@ -63,7 +63,7 @@ class Repositorio(ctx: Context) {
 
     private fun chaveNome(s: String) = s.trim().lowercase(java.util.Locale.ROOT)
 
-    /** Recebe um `.rjetreinopack` (treino + vídeos). Os vídeos só são guardados se o treino for novo ou mais recente. */
+    /** Recebe um `.fittreinopack` (treino + vídeos). Os vídeos só são guardados se o treino for novo ou mais recente. */
     fun receberPacoteComVideos(entrada: java.io.InputStream): Recebido {
         val tmp = File(appCtx.cacheDir, "pacote_" + System.nanoTime()).apply { mkdirs() }
         try {
@@ -98,7 +98,7 @@ class Repositorio(ctx: Context) {
         }
     }
 
-    /** Aceita o JSON do `.rjetreino` ou o código de texto (inclusive dentro de uma mensagem). */
+    /** Aceita o JSON do `.fittreino` ou o código de texto (inclusive dentro de uma mensagem). */
     fun receber(texto: String): Recebido {
         val t = texto.trim()
         val json = if (t.startsWith("{")) t else when (val c = CodigoTexto.decodificar(t)) {

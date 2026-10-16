@@ -19,7 +19,7 @@ object Contrato {
     const val FORMATO = 1
     const val TIPO_TREINO = "treino"
     const val TIPO_RESUMO = "resumo"
-    const val EXTENSAO_TREINO = "rjetreino"
+    const val EXTENSAO_TREINO = "fittreino"
     const val EXTENSAO_RESUMO = "rjeresumo"
 }
 

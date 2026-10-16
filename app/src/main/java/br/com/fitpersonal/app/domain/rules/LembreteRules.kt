@@ -59,7 +59,7 @@ object LembreteRules {
 
     /** Dos nomes existentes, quais apagar para manter só os [manter] mais recentes (ignora arquivos alheios). */
     fun backupsParaApagar(nomes: List<String>, manter: Int = MANTER_BACKUPS_AUTO): List<String> =
-        nomes.filter { it.startsWith(PREFIXO_BACKUP_AUTO) && it.endsWith(".rjebak") }
+        nomes.filter { it.startsWith(PREFIXO_BACKUP_AUTO) && (it.endsWith(".fitbak") || it.endsWith(".rjebak")) }
             .sortedDescending()
             .drop(manter)
 }

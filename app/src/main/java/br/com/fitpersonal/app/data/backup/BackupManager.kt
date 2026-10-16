@@ -48,7 +48,7 @@ data class ResumoBackup(val arquivos: Int, val bytes: Long)
 /**
  * Backup completo, sempre CIFRADO (AES-256-GCM, chave derivada da senha do backup):
  *   manifest.json · rje_avaliacoes.db (cópia legível) · perfil.json · pasta fotos · pasta branding
- * dentro de um .zip, dentro do envelope de [CifraBackup]. Extensão: `.rjebak`.
+ * dentro de um .zip, dentro do envelope de [CifraBackup]. Extensão: `.fitbak` (o antigo `.rjebak` continua sendo lido).
  *
  * O banco do aparelho é SQLCipher com chave local; por isso o backup leva uma cópia legível (sem a
  * chave do aparelho), protegida pela senha — assim ele restaura em qualquer aparelho.
@@ -64,7 +64,7 @@ class BackupManager @Inject constructor(
     private val segredos: SegredoLocal,
 ) {
     companion object {
-        const val EXTENSAO = ".rjebak"
+        const val EXTENSAO = ".fitbak"
         private const val MANIFEST = "manifest.json"
         private const val DB_ENTRY = "rje_avaliacoes.db"
         private const val PERFIL = "perfil.json"

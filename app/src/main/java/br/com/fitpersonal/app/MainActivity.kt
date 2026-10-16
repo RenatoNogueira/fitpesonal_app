@@ -48,7 +48,7 @@ import javax.inject.Inject
 
 /**
  * Única porta de entrada. Na primeira abertura a pessoa escolhe professor ou aluno ([EscolhaDeUso]);
- * a partir daí o app mostra só a metade escolhida. Arquivos de treino (.rjetreino, .rjetreinopack) e
+ * a partir daí o app mostra só a metade escolhida. Arquivos de treino (.fittreino, .fittreinopack) e
  * códigos recebidos por "Compartilhar" são tratados no modo aluno.
  */
 @AndroidEntryPoint
@@ -142,7 +142,7 @@ class MainActivity : ComponentActivity() {
     }
 
     /**
-     * Aceita VIEW (arquivo .rjetreino / .rjetreinopack) e SEND (arquivo ou texto com o código).
+     * Aceita VIEW (arquivo .fittreino / .fittreinopack) e SEND (arquivo ou texto com o código).
      * Se a pessoa ainda não escolheu o modo, receber um treino já define "aluno".
      * No modo professor o conteúdo é ignorado (quem gera os treinos é o professor).
      */
@@ -190,7 +190,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun ehPacoteComVideos(uri: Uri): Boolean {
-        if (uri.toString().lowercase().endsWith(".rjetreinopack")) return true
+        if (uri.toString().lowercase().endsWith(".fittreinopack") || uri.toString().lowercase().endsWith(".rjetreinopack")) return true
         return runCatching {
             contentResolver.openInputStream(uri)?.use { s ->
                 val a = s.read()

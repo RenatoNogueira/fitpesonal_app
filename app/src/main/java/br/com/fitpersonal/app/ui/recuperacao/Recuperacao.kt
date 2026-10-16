@@ -176,7 +176,7 @@ fun RecuperacaoScreen(info: InfoRecuperacao, vm: RecuperacaoViewModel) {
             }
             CartaoSecao(titulo = "Como recuperar") {
                 Text(
-                    "Seus dados continuam protegidos. Restaure um backup (.rjebak) usando a senha definida quando " +
+                    "Seus dados continuam protegidos. Restaure um backup (.fitbak) usando a senha definida quando " +
                         "ele foi criado. Uma cópia do arquivo antigo foi mantida no aparelho.",
                     style = MaterialTheme.typography.bodyMedium,
                 )

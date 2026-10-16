@@ -40,7 +40,7 @@ data class VideoExercicio(
 /**
  * Biblioteca de vídeos próprios em filesDir/videos. O arquivo é copiado para o armazenamento privado
  * (não depende da galeria) e identificado pelo nome normalizado do exercício. Fica fora do backup
- * `.rjebak` por causa do tamanho — o profissional pode compartilhar o arquivo separadamente.
+ * `.fitbak` por causa do tamanho — o profissional pode compartilhar o arquivo separadamente.
  */
 @Singleton
 class VideoExercicioService @Inject constructor(

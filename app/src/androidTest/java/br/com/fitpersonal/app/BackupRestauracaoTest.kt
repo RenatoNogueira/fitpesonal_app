@@ -85,7 +85,7 @@ class BackupRestauracaoTest {
     @Test fun exportarSemSenhaConfiguradaEhBloqueado() {
         assertFalse(backup.temSenha())
         assertThrows(SenhaAusenteException::class.java) {
-            runBlocking { backup.exportar(uri(File(amb.ctx.cacheDir, "x.rjebak"))) }
+            runBlocking { backup.exportar(uri(File(amb.ctx.cacheDir, "x.fitbak"))) }
         }
     }
 
@@ -93,7 +93,7 @@ class BackupRestauracaoTest {
         semear()
         backup.definirSenha(senhaBackup.toCharArray())
 
-        val arq = exportarPara("b.rjebak")
+        val arq = exportarPara("b.fitbak")
         val bytes = arq.readBytes()
 
         assertTrue(CifraBackup.ehCifrado(bytes.copyOf(4)))
@@ -110,7 +110,7 @@ class BackupRestauracaoTest {
     @Test fun restauraBancoFotosEPerfilAposPerdaDosDados() {
         semear()
         backup.definirSenha(senhaBackup.toCharArray())
-        val arq = exportarPara("b.rjebak")
+        val arq = exportarPara("b.fitbak")
 
         // Estrago: apaga aluno, foto e perfil
         runBlocking { db.alunoDao().todosSnapshot().forEach { db.alunoDao().excluir(it) } }
@@ -134,19 +134,19 @@ class BackupRestauracaoTest {
     @Test fun restauracaoGuardaUmSnapshotCifradoDoEstadoAnterior() {
         semear()
         backup.definirSenha(senhaBackup.toCharArray())
-        val arq = exportarPara("b.rjebak")
+        val arq = exportarPara("b.fitbak")
 
         runBlocking { backup.restaurar(uri(arq), senhaBackup.toCharArray()) }
 
         val snaps = File(amb.ctx.filesDir, "backups").listFiles().orEmpty()
-        assertTrue(snaps.any { it.name.startsWith("pre_restauracao_") && it.name.endsWith(".rjebak") })
+        assertTrue(snaps.any { it.name.startsWith("pre_restauracao_") && it.name.endsWith(".fitbak") })
         snaps.forEach { assertTrue(CifraBackup.ehCifrado(it.readBytes().copyOf(4))) }
     }
 
     @Test fun senhaIncorretaNaoAlteraNada() {
         semear()
         backup.definirSenha(senhaBackup.toCharArray())
-        val arq = exportarPara("b.rjebak")
+        val arq = exportarPara("b.fitbak")
         val bancoAntes = amb.arquivoBanco.length()
 
         assertThrows(SenhaIncorretaException::class.java) {
@@ -164,7 +164,7 @@ class BackupRestauracaoTest {
     @Test fun backupCifradoSemSenhaPedeASenha() {
         semear()
         backup.definirSenha(senhaBackup.toCharArray())
-        val arq = exportarPara("b.rjebak")
+        val arq = exportarPara("b.fitbak")
 
         assertThrows(SenhaNecessariaException::class.java) {
             runBlocking { backup.restaurar(uri(arq), null) }
@@ -187,7 +187,7 @@ class BackupRestauracaoTest {
 
     @Test fun zipComCaminhoMaliciosoEhRejeitadoSemEscreverForaDaPasta() {
         backup.definirSenha(senhaBackup.toCharArray())
-        val sujo = File(amb.ctx.cacheDir, "sujo.rjebak")
+        val sujo = File(amb.ctx.cacheDir, "sujo.fitbak")
         val senha = senhaBackup.toCharArray()
         CifraBackup.cifrando(FileOutputStream(sujo), senha, iteracoes = 1_000).use { saida ->
             ZipOutputStream(saida).use { z ->

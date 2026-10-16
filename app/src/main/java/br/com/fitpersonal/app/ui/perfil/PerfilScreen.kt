@@ -449,7 +449,7 @@ fun PerfilScreen(onVoltar: () -> Unit, vm: PerfilViewModel = hiltViewModel()) {
 
             CartaoSecao(titulo = "Backup manual e restauração") {
             Text(
-                "O backup (.rjebak) é criptografado com a sua senha e inclui alunos, avaliações, treinos, agenda, fotos, logo e perfil. " +
+                "O backup (.fitbak) é criptografado com a sua senha e inclui alunos, avaliações, treinos, agenda, fotos, logo e perfil. " +
                     "Guarde o arquivo fora do celular (Drive, e-mail ou computador); sem a senha ele não abre. " +
                     "Ele contém dados de saúde: proteja-o como dado sensível.",
                 style = MaterialTheme.typography.bodySmall,

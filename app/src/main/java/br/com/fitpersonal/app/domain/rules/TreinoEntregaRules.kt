@@ -120,7 +120,7 @@ object TreinoEntregaRules {
         profissional: String,
         marca: String,
         grupos: Map<DivisaoTreino, List<ExercicioTreino>>,
-        /** `.rjetreino` embutido: habilita registrar sessões e devolver o resumo por código. */
+        /** `.fittreino` embutido: habilita registrar sessões e devolver o resumo por código. */
         pacoteJson: String? = null,
     ): String {
         val divisoes = DivisaoTreino.entries.filter { grupos[it].orEmpty().isNotEmpty() }

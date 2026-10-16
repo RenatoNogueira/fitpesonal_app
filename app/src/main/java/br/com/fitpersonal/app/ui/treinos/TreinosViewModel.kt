@@ -90,7 +90,7 @@ data class TreinoFormState(
     val html: java.io.File? = null,
     /** Treino em texto formatado pronto para compartilhar (consumido pela tela). */
     val texto: String? = null,
-    /** Arquivo `.rjetreino` para o app do aluno (consumido pela tela). */
+    /** Arquivo `.fittreino` para o app do aluno (consumido pela tela). */
     val arquivoAluno: java.io.File? = null,
 )
 
@@ -272,7 +272,7 @@ class TreinoFormViewModel @Inject constructor(
         }
     }
 
-    /** Gera o `.rjetreino` (e o código de texto, usado como `texto`) para o app do aluno. */
+    /** Gera o `.fittreino` (e o código de texto, usado como `texto`) para o app do aluno. */
     fun enviarParaAppDoAluno(comoCodigo: Boolean) {
         if (idTreino == 0L) return
         viewModelScope.launch(TratadorDeErros) {
@@ -291,7 +291,7 @@ class TreinoFormViewModel @Inject constructor(
         }
     }
 
-    /** Treino + vídeos próprios num único arquivo `.rjetreinopack` para o app do aluno. */
+    /** Treino + vídeos próprios num único arquivo `.fittreinopack` para o app do aluno. */
     fun enviarPacoteComVideos() {
         if (idTreino == 0L) return
         _videoOcupado.value = true

@@ -39,15 +39,15 @@ class BackupAutomatico @Inject constructor(
                 ?.takeIf { it.exists() && it.canWrite() }
 
             val descricao = if (pasta != null) {
-                // O provedor acrescenta a extensão conforme o MIME; por isso o nome vai sem a extensão (.rjebak).
-                val doc = pasta.createFile("application/octet-stream", nome + ".rjebak")
+                // O provedor acrescenta a extensão conforme o MIME; por isso o nome vai sem a extensão (.fitbak).
+                val doc = pasta.createFile("application/octet-stream", nome + ".fitbak")
                     ?: throw IllegalStateException("Não foi possível criar o arquivo na pasta escolhida")
                 backup.exportar(doc.uri)
                 rotacionarPasta(pasta)
                 "pasta \"${cfg.pastaBackupNome.ifBlank { pasta.name.orEmpty() }}\""
             } else {
                 val dir = File(ctx.filesDir, "backups_auto").apply { mkdirs() }
-                backup.exportar(Uri.fromFile(File(dir, "$nome.rjebak")))
+                backup.exportar(Uri.fromFile(File(dir, "$nome.fitbak")))
                 rotacionarInterno(dir)
                 val aviso = if (cfg.pastaBackup != null) " (a pasta escolhida está indisponível)" else ""
                 "armazenamento interno do app$aviso"

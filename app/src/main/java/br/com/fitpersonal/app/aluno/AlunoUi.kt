@@ -537,7 +537,7 @@ private fun EstadoVazioLista() {
             modifier = Modifier.size(104.dp).clip(RoundedCornerShape(28.dp)),
         )
         Text("Nenhum treino ainda", style = MaterialTheme.typography.titleLarge)
-        PassoVazio(1, "Abra o arquivo .rjetreino", "Toque no arquivo que seu professor enviou (WhatsApp, e-mail…).")
+        PassoVazio(1, "Abra o arquivo do treino", "Toque no arquivo que seu professor enviou (WhatsApp, e-mail…).")
         PassoVazio(2, "Ou cole o código", "Toque em \"Colar código\" e cole a mensagem completa do professor.")
     }
 }
