@@ -291,3 +291,21 @@ class TesteAptidaoRepository @Inject constructor(private val dao: TesteAptidaoDa
     suspend fun registrar(t: br.com.fitpersonal.app.domain.rules.TesteAptidao): Long = dao.inserir(t.toEntity())
     suspend fun excluir(id: Long) = dao.excluir(id)
 }
+
+@Singleton
+class MetaComposicaoRepository @Inject constructor(private val dao: MetaComposicaoDao) {
+    fun doAluno(idAluno: Long): Flow<List<br.com.fitpersonal.app.domain.rules.MetaComposicao>> =
+        dao.doAluno(idAluno).map { l ->
+            l.mapNotNull { e ->
+                val m = br.com.fitpersonal.app.domain.rules.Metrica.entries.firstOrNull { it.name == e.metrica }
+                    ?: return@mapNotNull null   // métrica removida em versão futura: ignora
+                br.com.fitpersonal.app.domain.rules.MetaComposicao(e.idAluno, m, e.alvo)
+            }
+        }
+
+    suspend fun definir(idAluno: Long, metrica: br.com.fitpersonal.app.domain.rules.Metrica, alvo: Double) =
+        dao.salvar(MetaComposicaoEntity(idAluno, metrica.name, alvo))
+
+    suspend fun remover(idAluno: Long, metrica: br.com.fitpersonal.app.domain.rules.Metrica) =
+        dao.excluir(idAluno, metrica.name)
+}

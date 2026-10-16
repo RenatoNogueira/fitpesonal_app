@@ -145,3 +145,14 @@ val MIGRATION_10_11 = object : Migration(10, 11) {
         )
     }
 }
+
+/** v11 → v12: metas de composição corporal por aluno. */
+val MIGRATION_11_12 = object : Migration(11, 12) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS metas_composicao (" +
+                "idAluno INTEGER NOT NULL, metrica TEXT NOT NULL, alvo REAL NOT NULL, " +
+                "PRIMARY KEY(idAluno, metrica))"
+        )
+    }
+}

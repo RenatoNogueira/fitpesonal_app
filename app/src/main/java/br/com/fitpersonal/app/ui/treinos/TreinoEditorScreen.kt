@@ -58,6 +58,7 @@ fun TreinoEditorScreen(
     val videosMapa by vm.videos.collectAsStateWithLifecycle()
     val videoOcupado by vm.videoOcupado.collectAsStateWithLifecycle()
     val avaliacoesAluno by vm.avaliacoes.collectAsStateWithLifecycle()
+    val metasAluno by vm.metasAluno.collectAsStateWithLifecycle()
     var reproduzindo by remember { mutableStateOf<java.io.File?>(null) }
     val videosAcoes = VideosAcoes(
         mapa = videosMapa,
@@ -224,6 +225,7 @@ fun TreinoEditorScreen(
 
             br.com.fitpersonal.app.ui.evolucao.ComposicaoNoTreino(
                 avaliacoes = avaliacoesAluno,
+                metas = metasAluno,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 12.dp),
             )
 

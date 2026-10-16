@@ -69,12 +69,15 @@ data class AvaliacaoFormState(
     val pollock: AnalisePollock = AnalisePollock.Pendente("Preencha as dobras."),
     /** Outras avaliações salvas do aluno (sem a que está sendo editada), para o painel de composição. */
     val historico: List<AvaliacaoFisica> = emptyList(),
+    /** Metas de composição do aluno (uma por métrica). */
+    val metas: List<MetaComposicao> = emptyList(),
 )
 
 @HiltViewModel
 class AvaliacaoFormViewModel @Inject constructor(
     private val repo: AvaliacaoRepository,
     private val alunosRepo: AlunoRepository,
+    private val metasRepo: br.com.fitpersonal.app.data.repo.MetaComposicaoRepository,
     private val fotoStorage: FotoStorage,
     private val relatorios: br.com.fitpersonal.app.report.RelatorioService,
     savedState: SavedStateHandle,
@@ -103,6 +106,12 @@ class AvaliacaoFormViewModel @Inject constructor(
                 val hoje = LocalDate.now()
                 AvaliacaoInput(data = "%02d%02d%04d".format(hoje.dayOfMonth, hoje.monthValue, hoje.year))
             }
+            val idDoAluno = original?.idAluno ?: idAlunoArg
+            if (idDoAluno != 0L) {
+                viewModelScope.launch(TratadorDeErros) {
+                    metasRepo.doAluno(idDoAluno).collect { metas -> _state.update { it.copy(metas = metas) } }
+                }
+            }
             val historico = runCatching {
                 repo.doAluno(original?.idAluno ?: idAlunoArg).first().filter { a -> a.id != idAvaliacao }
             }.getOrDefault(emptyList())
@@ -129,6 +138,14 @@ class AvaliacaoFormViewModel @Inject constructor(
         val dobras = i.dobras.mapNotNull { (d, t) -> AvaliacaoValidator.parseDecimal(t)?.let { d to it } }.toMap()
         val data = AlunoValidator.parseData(i.data) ?: LocalDate.now()
         return s.copy(pollock = Pollock.analisar(i.protocolo, dobras, s.sexoCalculo, s.aluno?.dataNascimento, data))
+    }
+
+    /** Define (ou remove, com null) a meta do aluno para a métrica. */
+    fun definirMeta(metrica: Metrica, alvo: Double?) {
+        val id = _state.value.aluno?.id ?: return
+        viewModelScope.launch(TratadorDeErros) {
+            if (alvo == null) metasRepo.remover(id, metrica) else metasRepo.definir(id, metrica, alvo)
+        }
     }
 
     fun definirSexoCalculo(sexo: SexoBiologico) = _state.update { analisar(it.copy(sexoCalculo = sexo)) }

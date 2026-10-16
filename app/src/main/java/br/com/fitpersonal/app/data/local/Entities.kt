@@ -271,3 +271,12 @@ data class VideoExercicioEntity(
     val tamanhoBytes: Long,
     val criadoEm: String,
 )
+
+/** Meta de composição corporal de um aluno para uma métrica (ex.: % de gordura = 18). Uma por aluno e métrica. */
+@Entity(tableName = "metas_composicao", primaryKeys = ["idAluno", "metrica"])
+data class MetaComposicaoEntity(
+    val idAluno: Long,
+    /** Nome do enum `Metrica`. */
+    val metrica: String,
+    val alvo: Double,
+)

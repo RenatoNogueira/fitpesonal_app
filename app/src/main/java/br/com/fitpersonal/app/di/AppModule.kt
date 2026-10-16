@@ -26,7 +26,7 @@ object AppModule {
         val senha = BancoCriptografado.preparar(ctx, segredos)
         return Room.databaseBuilder(ctx, FitDatabase::class.java, DB_NOME)
             .openHelperFactory(SupportOpenHelperFactory(senha))
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12)
             .build()
     }
 
@@ -42,6 +42,7 @@ object AppModule {
     @Provides fun videoExercicioDao(db: FitDatabase) = db.videoExercicioDao()
     @Provides fun testeAptidaoDao(db: FitDatabase) = db.testeAptidaoDao()
     @Provides fun retornoDao(db: FitDatabase) = db.retornoDao()
+    @Provides fun metaComposicaoDao(db: FitDatabase) = db.metaComposicaoDao()
 
     @Provides @Singleton
     fun catalogoSeeder(@ApplicationContext ctx: Context, dao: CatalogoDao) = CatalogoSeeder(ctx, dao)

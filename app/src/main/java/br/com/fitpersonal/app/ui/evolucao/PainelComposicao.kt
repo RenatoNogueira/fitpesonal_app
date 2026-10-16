@@ -2,6 +2,12 @@ package br.com.fitpersonal.app.ui.evolucao
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import br.com.fitpersonal.app.domain.rules.MetaComposicao
+import br.com.fitpersonal.app.domain.rules.MetaComposicaoRules
+import br.com.fitpersonal.app.domain.rules.ProgressoMeta
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -70,7 +76,11 @@ fun PainelComposicao(
     historico: List<AvaliacaoFisica>,
     modifier: Modifier = Modifier,
     titulo: String = "Composição corporal",
+    metas: List<MetaComposicao> = emptyList(),
+    /** Se informado, tocar numa medida com meta possível abre o editor; valor null = remover a meta. */
+    onDefinirMeta: ((Metrica, Double?) -> Unit)? = null,
 ) {
+    var editando by remember { mutableStateOf<Metrica?>(null) }
     CartaoSecao(modifier = modifier, titulo = titulo) {
         if (atual == null) {
             Text(
@@ -124,11 +134,17 @@ fun PainelComposicao(
                     val valor = EvolucaoRules.valor(atual, m)!!
                     val antes = anterior?.let { EvolucaoRules.valor(it, m) }
                     val serie = trajetoria.mapNotNull { EvolucaoRules.valor(it, m) }
+                    val meta = metas.firstOrNull { it.metrica == m }
+                    val progresso = meta?.let { MetaComposicaoRules.progresso(m, serie.first(), valor, it.alvo) }
+                    val podeEditar = onDefinirMeta != null && m in MetaComposicaoRules.METRICAS
                     CartaoMedida(
                         metrica = m,
                         valor = valor,
                         antes = antes,
                         serie = serie,
+                        progresso = progresso,
+                        dicaMeta = podeEditar && progresso == null,
+                        onClick = if (podeEditar) ({ editando = m }) else null,
                         modifier = Modifier.weight(1f),
                     )
                 }
@@ -136,6 +152,44 @@ fun PainelComposicao(
             }
         }
     }
+
+    editando?.let { m ->
+        EditorMeta(
+            metrica = m,
+            atual = metas.firstOrNull { it.metrica == m }?.alvo,
+            onSalvar = { v -> onDefinirMeta?.invoke(m, v); editando = null },
+            onFechar = { editando = null },
+        )
+    }
+}
+
+@Composable
+private fun EditorMeta(metrica: Metrica, atual: Double?, onSalvar: (Double?) -> Unit, onFechar: () -> Unit) {
+    var texto by remember { mutableStateOf(atual?.fmt(metrica.casas).orEmpty()) }
+    val valor = texto.trim().replace(',', '.').toDoubleOrNull()
+    val valido = valor != null && valor > 0.0 && valor < 1000.0
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onFechar,
+        title = { Text("Meta de " + metrica.rotulo.lowercase()) },
+        text = {
+            androidx.compose.material3.OutlinedTextField(
+                value = texto,
+                onValueChange = { texto = it.filter { c -> c.isDigit() || c == ',' || c == '.' }.take(6) },
+                label = { Text("Valor desejado" + if (metrica.unidade.isNotEmpty()) " (" + metrica.unidade + ")" else "") },
+                singleLine = true,
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Decimal),
+            )
+        },
+        confirmButton = {
+            androidx.compose.material3.TextButton(onClick = { onSalvar(valor) }, enabled = valido) { Text("Salvar") }
+        },
+        dismissButton = {
+            Row {
+                if (atual != null) androidx.compose.material3.TextButton(onClick = { onSalvar(null) }) { Text("Remover meta") }
+                androidx.compose.material3.TextButton(onClick = onFechar) { Text("Cancelar") }
+            }
+        },
+    )
 }
 
 @Composable
@@ -192,6 +246,9 @@ private fun CartaoMedida(
     valor: Double,
     antes: Double?,
     serie: List<Double>,
+    progresso: ProgressoMeta? = null,
+    dicaMeta: Boolean = false,
+    onClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     val variacao = antes?.let { EvolucaoRules.variacao(metrica, it, valor) }
@@ -199,6 +256,7 @@ private fun CartaoMedida(
         modifier
             .clip(RoundedCornerShape(16.dp))
             .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
             .padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
@@ -218,6 +276,22 @@ private fun CartaoMedida(
             if (variacao != null) PilulaVariacao(EvolucaoRules.formatarDelta(variacao, metrica), variacao.sentido)
             else Text("—", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             MiniGrafico(serie, Modifier.width(56.dp).height(24.dp))
+        }
+        if (progresso != null) {
+            androidx.compose.material3.LinearProgressIndicator(
+                progress = { progresso.fracao },
+                modifier = Modifier.fillMaxWidth().height(6.dp).clip(RoundedCornerShape(50)),
+                color = if (progresso.atingida) PaletaPasta.Verde else MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+            )
+            Text(
+                if (progresso.atingida) "Meta de " + progresso.alvo.fmt(metrica.casas) + " atingida"
+                else "Meta " + progresso.alvo.fmt(metrica.casas) + " • faltam " + progresso.faltam.fmt(metrica.casas),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        } else if (dicaMeta) {
+            Text("Toque para definir meta", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
         }
     }
 }
@@ -273,7 +347,11 @@ private fun MiniGrafico(valores: List<Double>, modifier: Modifier = Modifier) {
  */
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
-fun ComposicaoNoTreino(avaliacoes: List<AvaliacaoFisica>, modifier: Modifier = Modifier) {
+fun ComposicaoNoTreino(
+    avaliacoes: List<AvaliacaoFisica>,
+    modifier: Modifier = Modifier,
+    metas: List<MetaComposicao> = emptyList(),
+) {
     var aberto by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
     val ordenadas = avaliacoes.sortedWith(compareBy({ it.data }, { it.id }))
     val ultima = ordenadas.lastOrNull()
@@ -317,7 +395,7 @@ fun ComposicaoNoTreino(avaliacoes: List<AvaliacaoFisica>, modifier: Modifier = M
                     .padding(bottom = 24.dp)
                     .verticalScroll(androidx.compose.foundation.rememberScrollState()),
             ) {
-                PainelComposicao(atual = ultima, historico = ordenadas.dropLast(1), titulo = "Evolução do aluno")
+                PainelComposicao(atual = ultima, historico = ordenadas.dropLast(1), titulo = "Evolução do aluno", metas = metas)
             }
         }
     }

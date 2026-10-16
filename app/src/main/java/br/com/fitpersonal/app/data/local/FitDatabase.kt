@@ -4,7 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 
 const val DB_NOME = "fitpersonal.db"
-const val DB_VERSAO = 11
+const val DB_VERSAO = 12
 
 @Database(
     entities = [
@@ -14,7 +14,7 @@ const val DB_VERSAO = 11
         PagamentoEntity::class, HistoricoCargaEntity::class,
         ListaEsperaEntity::class, TesteAptidaoEntity::class,
         ExecucaoImportadaEntity::class, RetornoAlunoEntity::class,
-        VideoExercicioEntity::class,
+        VideoExercicioEntity::class, MetaComposicaoEntity::class,
     ],
     version = DB_VERSAO,
     exportSchema = true,
@@ -32,4 +32,5 @@ abstract class FitDatabase : RoomDatabase() {
     abstract fun videoExercicioDao(): VideoExercicioDao
     abstract fun testeAptidaoDao(): TesteAptidaoDao
     abstract fun retornoDao(): RetornoDao
+    abstract fun metaComposicaoDao(): MetaComposicaoDao
 }

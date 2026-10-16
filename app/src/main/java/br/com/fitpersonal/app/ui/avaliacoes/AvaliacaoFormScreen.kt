@@ -205,6 +205,8 @@ private fun PassoMedidas(s: AvaliacaoFormState, vm: AvaliacaoFormViewModel) {
     br.com.fitpersonal.app.ui.evolucao.PainelComposicao(
         atual = avaliacaoAoVivo(s),
         historico = s.historico,
+        metas = s.metas,
+        onDefinirMeta = vm::definirMeta,
     )
 }
 

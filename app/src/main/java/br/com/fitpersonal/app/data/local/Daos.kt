@@ -349,3 +349,15 @@ interface VideoExercicioDao {
     @Query("DELETE FROM videos_exercicio WHERE chave = :chave")
     suspend fun excluir(chave: String)
 }
+
+@Dao
+interface MetaComposicaoDao {
+    @Query("SELECT * FROM metas_composicao WHERE idAluno = :idAluno")
+    fun doAluno(idAluno: Long): Flow<List<MetaComposicaoEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun salvar(e: MetaComposicaoEntity)
+
+    @Query("DELETE FROM metas_composicao WHERE idAluno = :idAluno AND metrica = :metrica")
+    suspend fun excluir(idAluno: Long, metrica: String)
+}
