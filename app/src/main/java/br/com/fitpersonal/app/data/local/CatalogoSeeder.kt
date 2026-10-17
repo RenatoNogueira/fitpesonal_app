@@ -11,6 +11,8 @@ import org.json.JSONObject
 class CatalogoSeeder(private val context: Context, private val dao: CatalogoDao) {
 
     suspend fun seedSeNecessario() {
+        // Bases criadas antes da correção guardaram o texto "null" nos campos sem valor: limpa na hora.
+        dao.limparNulosTextuais()
         if (dao.total() > 0) return
         val texto = runCatching {
             context.assets.open(ARQUIVO).bufferedReader(Charsets.UTF_8).use { it.readText() }
@@ -20,17 +22,21 @@ class CatalogoSeeder(private val context: Context, private val dao: CatalogoDao)
         itens.chunked(200).forEach { dao.inserirTodos(it) }
     }
 
+    /** Texto do campo; JSON null (ou ausente) vira vazio. `optString` devolveria o texto "null". */
+    private fun JSONObject.texto(chave: String): String =
+        if (isNull(chave)) "" else optString(chave).trim()
+
     private fun JSONObject.lista(chave: String, sep: String): String {
         val a = optJSONArray(chave) ?: return ""
         return (0 until a.length()).joinToString(sep) { a.getString(it) }
     }
 
     private fun JSONObject.toEntity() = ExercicioCatalogoEntity(
-        id = optString("id"),
-        nome = optString("name"),
-        categoria = optString("category"),
-        nivel = optString("level"),
-        equipamento = optString("equipment"),
+        id = texto("id"),
+        nome = texto("name"),
+        categoria = texto("category"),
+        nivel = texto("level"),
+        equipamento = texto("equipment"),
         musculosPrimarios = lista("primaryMuscles", ";"),
         musculosSecundarios = lista("secondaryMuscles", ";"),
         instrucoes = lista("instructions", "\n"),

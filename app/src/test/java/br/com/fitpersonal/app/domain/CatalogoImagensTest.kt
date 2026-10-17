@@ -40,4 +40,13 @@ class CatalogoImagensTest {
         assertEquals(0, CatalogoImagens.movimento("com espaco").size)
         assertEquals(0, CatalogoImagens.movimento("x".repeat(81)).size)
     }
+
+    @Test fun rotuloEscondeNuloEArrumaTexto() {
+        assertEquals("", CatalogoImagens.rotulo(null))
+        assertEquals("", CatalogoImagens.rotulo("null"))
+        assertEquals("", CatalogoImagens.rotulo(" NULL "))
+        assertEquals("", CatalogoImagens.rotulo("  "))
+        assertEquals("Peso do corpo", CatalogoImagens.rotulo("peso-do-corpo"))
+        assertEquals("Intermediario", CatalogoImagens.rotulo("intermediario"))
+    }
 }

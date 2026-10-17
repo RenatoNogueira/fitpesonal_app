@@ -10,6 +10,16 @@ object CatalogoImagens {
 
     fun url(relativo: String): String = BASE + relativo.trim().trimStart('/').replace(" ", "%20")
 
+    /**
+     * Texto de um campo do catálogo para exibir: vazio se for nulo (inclusive o texto "null" de importações antigas) e
+     * sem hífens ("peso-do-corpo" → "Peso do corpo").
+     */
+    fun rotulo(valor: String?): String {
+        val t = valor?.trim().orEmpty()
+        if (t.isEmpty() || t.equals("null", ignoreCase = true)) return ""
+        return t.replace('-', ' ').replaceFirstChar { it.uppercase() }
+    }
+
     private val ID_SEGURO = Regex("^[A-Za-z0-9_.\\-]{1,80}$")
 
     /**

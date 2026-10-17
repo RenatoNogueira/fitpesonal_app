@@ -515,6 +515,7 @@ private fun CatalogoSheet(vm: TreinoFormViewModel, divisao: DivisaoTreino, onFec
                                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                                     ) {
                                         listOf(item.categoria, item.equipamento, item.nivel)
+                                            .map { br.com.fitpersonal.app.domain.rules.CatalogoImagens.rotulo(it) }
                                             .filter { it.isNotBlank() }
                                             .forEach { ChipStatus(it, TomChip.Neutro) }
                                     }

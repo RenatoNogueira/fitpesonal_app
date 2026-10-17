@@ -191,6 +191,16 @@ interface CatalogoDao {
     )
     suspend fun buscar(termo: String, limite: Int, offset: Int): List<ExercicioCatalogoEntity>
 
+    /** Troca o texto "null" (de importações antigas) por vazio nos campos descritivos. */
+    @Query(
+        "UPDATE exercicios_catalogo SET " +
+            "equipamento = CASE WHEN equipamento = 'null' THEN '' ELSE equipamento END, " +
+            "categoria = CASE WHEN categoria = 'null' THEN '' ELSE categoria END, " +
+            "nivel = CASE WHEN nivel = 'null' THEN '' ELSE nivel END " +
+            "WHERE equipamento = 'null' OR categoria = 'null' OR nivel = 'null'"
+    )
+    suspend fun limparNulosTextuais()
+
     /** Exercício do catálogo pelo nome exato (sem diferenciar maiúsculas); usado ao enviar treinos antigos ao aluno. */
     @Query("SELECT * FROM exercicios_catalogo WHERE nome = :nome COLLATE NOCASE LIMIT 1")
     suspend fun porNome(nome: String): ExercicioCatalogoEntity?
