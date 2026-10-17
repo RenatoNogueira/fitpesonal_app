@@ -137,6 +137,8 @@ data class ExercicioTreino(
     val video: String? = null,
     /** Método de execução (id de MetodoTreino: BISET, CIRCUITO, AMRAP, EMOM, DROPSET); null = série normal. */
     val metodo: String? = null,
+    /** Id do exercício no catálogo (também é a pasta das fotos do movimento); null = exercício digitado à mão. */
+    val catalogoId: String? = null,
 )
 
 data class ExercicioCatalogo(

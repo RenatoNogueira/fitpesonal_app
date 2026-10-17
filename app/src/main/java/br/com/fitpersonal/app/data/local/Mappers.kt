@@ -78,11 +78,11 @@ fun TreinoEntity.toDomain() = Treino(id, idAluno, nome, objetivo, LocalDate.pars
 fun Treino.toEntity() = TreinoEntity(id, idAluno, nome, objetivo, dataCriacao.toString())
 
 fun ExercicioTreinoEntity.toDomain() = ExercicioTreino(
-    id, idTreino, nome, (DivisaoTreino.entries.firstOrNull { it.name == divisao } ?: DivisaoTreino.A), series, repeticoes, carga, descanso, observacoes, video, metodo,
+    id, idTreino, nome, (DivisaoTreino.entries.firstOrNull { it.name == divisao } ?: DivisaoTreino.A), series, repeticoes, carga, descanso, observacoes, video, metodo, catalogoId,
 )
 
 fun ExercicioTreino.toEntity() = ExercicioTreinoEntity(
-    id, idTreino, nome, divisao.name, series, repeticoes, carga, descanso, observacoes, video, metodo,
+    id, idTreino, nome, divisao.name, series, repeticoes, carga, descanso, observacoes, video, metodo, catalogoId,
 )
 
 fun ExercicioCatalogoEntity.toDomain() = ExercicioCatalogo(

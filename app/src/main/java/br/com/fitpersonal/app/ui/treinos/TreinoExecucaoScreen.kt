@@ -422,6 +422,8 @@ private fun CartaoExercicio(
                 }
             }
 
+            br.com.fitpersonal.app.ui.common.AnimacaoMovimento(e.catalogoId, "Como executar: " + e.nome, Modifier.fillMaxWidth())
+
             Row(
                 Modifier.horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),

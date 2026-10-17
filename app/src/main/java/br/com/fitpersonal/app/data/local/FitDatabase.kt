@@ -4,7 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 
 const val DB_NOME = "fitpersonal.db"
-const val DB_VERSAO = 13
+const val DB_VERSAO = 14
 
 @Database(
     entities = [

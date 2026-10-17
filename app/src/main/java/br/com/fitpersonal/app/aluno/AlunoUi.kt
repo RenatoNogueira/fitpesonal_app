@@ -1016,6 +1016,9 @@ private fun CartaoExercicio(
                 }
             }
 
+            // Como o movimento é executado (posição inicial e final em ciclo)
+            br.com.fitpersonal.app.ui.common.AnimacaoMovimento(e.catalogoId, "Como executar: " + e.nome, Modifier.fillMaxWidth())
+
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 FilledTonalIconButton(onClick = { onCarga(ajustarCarga(carga, -1.0)) }) {
                     Icon(Icons.Filled.Remove, contentDescription = "Diminuir carga")

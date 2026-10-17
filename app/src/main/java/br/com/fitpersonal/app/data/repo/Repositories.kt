@@ -235,7 +235,7 @@ class ModeloTreinoRepository @Inject constructor(
                 ModeloExercicioEntity(
                     idModelo = id, nome = it.nome, divisao = it.divisao, series = it.series,
                     repeticoes = it.repeticoes, carga = it.carga, descanso = it.descanso, observacoes = it.observacoes,
-                    video = it.video, metodo = it.metodo,
+                    video = it.video, metodo = it.metodo, catalogoId = it.catalogoId,
                 )
             }
         )
@@ -253,7 +253,7 @@ class ModeloTreinoRepository @Inject constructor(
                 ExercicioTreinoEntity(
                     idTreino = novo, nome = it.nome, divisao = it.divisao, series = it.series,
                     repeticoes = it.repeticoes, carga = it.carga, descanso = it.descanso, observacoes = it.observacoes,
-                    video = it.video, metodo = it.metodo,
+                    video = it.video, metodo = it.metodo, catalogoId = it.catalogoId,
                 )
             }
         )

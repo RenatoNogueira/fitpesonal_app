@@ -19,7 +19,7 @@ object TreinoRules {
 
     /** Converte itens do catálogo em exercícios do treino (fluxo "Adicionar selecionados"). */
     fun doCatalogo(itens: Collection<ExercicioCatalogo>, divisao: DivisaoTreino): List<ExercicioTreino> =
-        itens.map { ExercicioTreino(idTreino = 0, nome = it.nome, divisao = divisao) }
+        itens.map { ExercicioTreino(idTreino = 0, nome = it.nome, divisao = divisao, catalogoId = it.id) }
 
     /** "3 x 12 • 20 kg • 60 s" — só as partes preenchidas. */
     fun resumo(e: ExercicioTreino): String {

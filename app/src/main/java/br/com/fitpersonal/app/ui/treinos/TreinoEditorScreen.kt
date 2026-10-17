@@ -519,6 +519,7 @@ private fun CatalogoSheet(vm: TreinoFormViewModel, divisao: DivisaoTreino, onFec
                                             .forEach { ChipStatus(it, TomChip.Neutro) }
                                     }
                                     if (expandido == item.id) {
+                                        br.com.fitpersonal.app.ui.common.AnimacaoMovimento(item.id, "Como executar: " + item.nome, Modifier.fillMaxWidth())
                                         val fotos = br.com.fitpersonal.app.domain.rules.CatalogoImagens.urls(item.imagens)
                                         if (fotos.isNotEmpty()) {
                                             Row(
@@ -663,6 +664,8 @@ private fun ExercicioDialog(
                         isError = erro != null, supportingText = erro?.let { { Text(it) } },
                         singleLine = true, modifier = Modifier.fillMaxWidth(),
                     )
+
+                    br.com.fitpersonal.app.ui.common.AnimacaoMovimento(inicial.catalogoId, "Como executar: " + nome, Modifier.fillMaxWidth())
 
                     // Divisão em blocos coloridos
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

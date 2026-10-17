@@ -44,6 +44,7 @@ class ContratoService @Inject constructor(
     @ApplicationContext private val ctx: Context,
     private val alunos: AlunoDao,
     private val treinos: TreinoDao,
+    private val catalogo: br.com.fitpersonal.app.data.local.CatalogoDao,
     private val perfil: PerfilRepository,
     private val videos: br.com.fitpersonal.app.data.files.VideoExercicioService,
 ) {
@@ -64,6 +65,7 @@ class ContratoService @Inject constructor(
                     nome = it.nome.trim().ifEmpty { "Exercício" },
                     series = it.series, repeticoes = it.repeticoes, carga = it.carga,
                     descanso = it.descanso, obs = it.observacoes, video = it.video, metodo = it.metodo,
+                    catalogoId = it.catalogoId ?: catalogo.porNome(it.nome.trim())?.id,
                 )
             }
         }

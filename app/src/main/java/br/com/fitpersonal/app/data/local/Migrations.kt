@@ -164,3 +164,20 @@ val MIGRATION_12_13 = object : Migration(12, 13) {
         db.execSQL("ALTER TABLE exercicios_modelo ADD COLUMN metodo TEXT")
     }
 }
+
+/**
+ * v13 → v14: exercícios guardam o id do catálogo (fotos do movimento). Os que já existem ganham o id quando o
+ * nome bate com um exercício do catálogo (sem diferenciar maiúsculas de minúsculas).
+ */
+val MIGRATION_13_14 = object : Migration(13, 14) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE exercicios_treino ADD COLUMN catalogoId TEXT")
+        db.execSQL("ALTER TABLE exercicios_modelo ADD COLUMN catalogoId TEXT")
+        for (tabela in listOf("exercicios_treino", "exercicios_modelo")) {
+            db.execSQL(
+                "UPDATE " + tabela + " SET catalogoId = " +
+                    "(SELECT c.id FROM exercicios_catalogo c WHERE lower(c.nome) = lower(" + tabela + ".nome) LIMIT 1)"
+            )
+        }
+    }
+}
