@@ -87,4 +87,4 @@ Write-Host "  Chave:  $arquivoJks"
 Write-Host "  Dados:  $arquivoProps  (contém a senha)"
 Write-Host ""
 Write-Host "FAÇA AGORA UMA CÓPIA DOS DOIS ARQUIVOS em local seguro e fora deste computador." -ForegroundColor Yellow
-Write-Host "Depois gere o pacote da loja:  .\gradlew.bat :app:bundleRelease"
+Write-Host "Depois, no Android Studio: Build > Generate Signed App Bundle or APK (veja docs/PUBLICACAO.md)."
