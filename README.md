@@ -113,11 +113,11 @@ Testes: `src/test` (JVM: regras de domínio, cifra, parser do clima, política d
 
 ## Premissas
 - Um profissional por instalação; sem login nem sincronização.
-- Dados 100% locais. A **única** chamada de rede é o clima (envia só o nome da cidade e a chave). `allowBackup=false`.
+- Dados 100% locais. Rede só para: clima (OpenWeather: nome da cidade e chave), imagens do catálogo de exercícios (baixadas de raw.githubusercontent.com) e, **se o usuário aceitar**, estatísticas de uso anônimas (Firebase). `allowBackup=false`.
 
 ## Estado de verificação — leia antes de publicar
-**O projeto nunca foi compilado nem executado**: foi escrito e revisado manualmente, sem Android SDK/JDK. Espere pequenos ajustes no primeiro build. Pontos de maior risco:
-- API do SQLCipher (`net.zetetic:sqlcipher-android:4.5.6`): `openDatabase`, `rawExecSQL`, `rawQuery`, `SupportOpenHelperFactory` (usadas em `BancoCriptografado.kt` e `AppModule.kt`).
+O projeto é compilado e testado no Android Studio pela equipe; muitas etapas recentes foram escritas por revisão estática, então rode **Clean/Rebuild, os testes unitários e um teste completo em aparelho** (tipo de build `homologacao`, que liga o R8 como no release) antes de publicar. Veja docs/PUBLICACAO.md. Pontos de maior risco:
+- API do SQLCipher (`net.zetetic:sqlcipher-android:4.6.1`): `openDatabase`, `rawExecSQL`, `rawQuery`, `SupportOpenHelperFactory` (usadas em `BancoCriptografado.kt` e `AppModule.kt`).
 - Assinaturas do `androidx.sqlite` nos testes instrumentados (`SupportSQLiteOpenHelper.Callback`).
 - Layout dos PDFs, restauração de backup, importador do desktop, câmera/galeria e lembretes em Doze nunca rodaram em aparelho.
 - Fórmulas de Pollock/Siri e textos de saúde: validar com profissional da área.

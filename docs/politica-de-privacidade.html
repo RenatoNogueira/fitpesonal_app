@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Política de Privacidade — FitPersonal</title>
+<style>
+:root{color-scheme:light dark}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;max-width:46rem;margin:0 auto;padding:1rem 1.25rem 3rem;line-height:1.6}
+h1{font-size:1.7rem;margin-top:1.5rem}h2{font-size:1.2rem;margin-top:2rem;border-bottom:1px solid #8884;padding-bottom:.25rem}
+table{border-collapse:collapse;width:100%;font-size:.92rem;margin:.75rem 0}th,td{border:1px solid #8886;padding:.4rem .55rem;text-align:left;vertical-align:top}th{background:#8882}
+blockquote{margin:1rem 0;padding:.6rem 1rem;border-left:4px solid #8aa;background:#8881}
+code{background:#8883;padding:0 .25rem;border-radius:4px}
+</style>
+</head>
+<body>
+<h1>Política de Privacidade — FitPersonal</h1>
+<p><strong>Vigência:</strong> a partir de 19/10/2026 · <strong>Versão do documento:</strong> 1.0</p>
+<blockquote><strong>Modelo para revisão.</strong> Este texto descreve fielmente o funcionamento atual do aplicativo, mas é um modelo.</blockquote>
+<blockquote>Antes de publicar, preencha os campos entre colchetes e peça a revisão de uma assessoria jurídica (LGPD — Lei 13.709/2018).</blockquote>
+<h2>1. Quem somos</h2>
+<p>O <strong>FitPersonal</strong> é um aplicativo para profissionais de educação física organizarem alunos, avaliações físicas, treinos e agenda,</p>
+<p>e para alunos receberem e executarem os treinos enviados pelo profissional.</p>
+<ul>
+<li><strong>Desenvolvedor:</strong> [nome do desenvolvedor ou razão social] — CPF/CNPJ [número]</li>
+<li><strong>Contato para assuntos de privacidade:</strong> [e-mail de contato]</li>
+</ul>
+<h2>2. O papel de cada pessoa (LGPD)</h2>
+<ul>
+<li><strong>O profissional que usa o app</strong> é o <strong>controlador</strong> dos dados dos seus alunos: ele decide quais dados coleta e para quê. O aplicativo é a ferramenta que os guarda <strong>no aparelho dele</strong>.</li>
+<li><strong>O desenvolvedor do FitPersonal não recebe, não armazena e não tem acesso</strong> aos dados de alunos, avaliações, treinos, fotos ou mensagens. Não existe conta de usuário nem servidor do FitPersonal com esses dados.</li>
+<li>O <strong>aluno</strong> que usa o modo aluno guarda no próprio aparelho o treino recebido e o registro das suas sessões.</li>
+</ul>
+<h2>3. Quais dados são tratados no aparelho</h2>
+<table><thead><tr><th>Tipo</th><th>Exemplos</th><th>Para quê</th></tr></thead><tbody>
+<tr><td>Identificação e contato do aluno</td><td>nome, nascimento, CPF, CEP, telefone, e-mail, Instagram</td><td>cadastro e contato</td></tr>
+<tr><td>Dados de saúde (sensíveis)</td><td>medidas corporais, % de gordura, pressão arterial, exames, histórico de saúde, anamnese, PAR-Q, avaliação postural, fotos</td><td>avaliação física e prescrição</td></tr>
+<tr><td>Treino e agenda</td><td>exercícios, cargas, sessões, agendamentos, lembretes</td><td>acompanhamento</td></tr>
+<tr><td>Financeiro</td><td>mensalidade, dia de vencimento, pagamentos registrados</td><td>cobrança e controle</td></tr>
+<tr><td>Dados do profissional</td><td>nome, marca, CREF, cidade, chave Pix, logotipo</td><td>relatórios, mensagens e cobranças</td></tr>
+<tr><td>Modo aluno</td><td>hábitos diários, check-in semanal, diário de refeições (texto e fotos)</td><td>acompanhamento pessoal</td></tr>
+</tbody></table>
+<p>Tudo isso fica <strong>somente no armazenamento privado do aplicativo</strong>, no aparelho do usuário.</p>
+<h2>4. Como os dados são protegidos</h2>
+<ul>
+<li>O banco de dados é <strong>criptografado</strong> (SQLCipher, AES-256), com chave guardada no cofre do Android (Keystore).</li>
+<li>Os <strong>backups</strong> são sempre criptografados com uma senha definida pelo profissional. <strong>A senha não pode ser recuperada.</strong></li>
+<li>O app oferece bloqueio por biometria/PIN do aparelho e a opção de impedir capturas de tela.</li>
+<li>O backup automático do Android em nuvem está <strong>desativado</strong> para este app (<code>allowBackup=false</code>).</li>
+<li>As <strong>fotos</strong> ficam no armazenamento privado do app, protegido pelo sistema, mas não são criptografadas individualmente pelo aplicativo.</li>
+</ul>
+<h2>5. Permissões do aplicativo</h2>
+<table><thead><tr><th>Permissão</th><th>Por quê</th></tr></thead><tbody>
+<tr><td>Notificações</td><td>lembretes de atendimento, aviso de reavaliação e de vencimento, lembrete de treino do aluno</td></tr>
+<tr><td>Internet</td><td>clima, imagens do catálogo de exercícios e, se você aceitar, estatísticas de uso (seção 6)</td></tr>
+<tr><td>Câmera</td><td><strong>não pedimos a permissão</strong>: as fotos são feitas pelo app de câmera do próprio sistema</td></tr>
+<tr><td>Fotos e arquivos</td><td>só os arquivos que você escolhe pelo seletor do sistema</td></tr>
+</tbody></table>
+<h2>6. Serviços de terceiros e comunicação de rede</h2>
+<ol>
+<li><strong>OpenWeather (clima).</strong> Envia apenas o <strong>nome da cidade</strong> informada no perfil do profissional (e a chave de acesso do app). Nenhum dado de aluno. Política: openweathermap.org/privacy-policy.</li>
+<li><strong>Imagens do catálogo de exercícios.</strong> Ao ver um exercício do catálogo, o app baixa fotos de raw.githubusercontent.com (GitHub). O GitHub pode registrar o endereço IP da requisição, como em qualquer download. Nenhum dado pessoal é enviado.</li>
+<li><strong>Estatísticas de uso (Firebase Analytics, do Google) — opcional.</strong> Só são coletadas se você <strong>aceitar</strong> na pergunta inicial ou em <em>Perfil → Segurança e privacidade</em>, e podem ser desligadas a qualquer momento. Coletamos apenas **quais telas foram abertas, quais ações foram concluídas<strong> (por exemplo, "aluno criado") </strong>e em qual tela alguém desistiu de uma tarefa**. <strong>Nunca</strong> enviamos nomes, textos digitados, medidas, fotos, mensagens, identificadores de alunos nem o identificador de publicidade do aparelho. Política do Google: policies.google.com/privacy.</li>
+<li><strong>Compartilhamentos feitos por você.</strong> PDFs, mensagens de WhatsApp, arquivos de treino, backups e sincronização por pasta só saem do aparelho por uma ação sua, para o destino que você escolher (WhatsApp, e-mail, pasta na nuvem etc.). A partir daí, o tratamento passa a ser do serviço escolhido e de quem recebe.</li>
+</ol>
+<p>[Se o aplicativo passar a exibir anúncios ou a ter assinatura, esta seção será atualizada <strong>antes</strong> disso, com o aviso e o pedido de</p>
+<p>consentimento exigidos.]</p>
+<h2>7. Base legal e consentimento</h2>
+<ul>
+<li>Para <strong>dados de saúde</strong>, a base usual é o <strong>consentimento específico e destacado do aluno</strong> (LGPD, art. 11, I). O app permite registrar, no cadastro de cada aluno, que o consentimento foi obtido e a data. <strong>Obter e guardar esse consentimento é responsabilidade do profissional.</strong></li>
+<li>Para as <strong>estatísticas de uso</strong>, a base é o seu consentimento (opcional e revogável).</li>
+<li>Para a <strong>consulta de clima</strong>, o legítimo interesse de oferecer a função (apenas nome de cidade).</li>
+</ul>
+<h2>8. Por quanto tempo guardamos</h2>
+<p>Os dados ficam no aparelho <strong>até o profissional excluí-los</strong> ou desinstalar o app. Ao excluir um aluno, o app remove avaliações,</p>
+<p>treinos, agenda, pagamentos, fotos e lembretes dele. Cópias já exportadas (PDFs, backups, arquivos enviados) não são apagadas pelo app.</p>
+<p>Desinstalar o aplicativo apaga os dados do aparelho; backups feitos antes continuam existindo onde foram guardados.</p>
+<h2>9. Direitos do titular</h2>
+<p>O titular dos dados (por exemplo, o aluno) pode pedir **confirmação do tratamento, acesso, correção, anonimização, portabilidade,</p>
+<p>eliminação e informação sobre compartilhamentos<strong> (LGPD, art. 18). Como os dados do aluno estão com o </strong>profissional**, o pedido</p>
+<p>deve ser feito a ele. O profissional corrige os dados no cadastro, exporta os dados do aluno e os exclui pelo próprio aplicativo.</p>
+<p>Para dúvidas sobre o aplicativo em si, escreva para [e-mail de contato].</p>
+<h2>10. Crianças e adolescentes</h2>
+<p>O app é destinado a profissionais e a seus alunos. Dados de menores devem ser tratados com consentimento de um dos pais ou responsável,</p>
+<p>obtido pelo profissional.</p>
+<h2>11. Incidentes de segurança</h2>
+<p>Em caso de perda ou roubo do aparelho, ou acesso indevido aos dados, o profissional deve avaliar a comunicação aos alunos afetados e à</p>
+<p>ANPD (LGPD, art. 48). Como o desenvolvedor não tem acesso aos dados, não consegue detectar nem comunicar esses incidentes pelo profissional.</p>
+<h2>12. Mudanças nesta política</h2>
+<p>Quando algo relevante mudar (por exemplo, um novo serviço de terceiros), esta política e o termo exibido no app serão atualizados, e o</p>
+<p>app pedirá um novo aceite. A data de vigência no topo indica a versão atual.</p>
+<h2>13. Contato</h2>
+<p>[e-mail de contato] · [cidade/UF]</p>
+</body>
+</html>

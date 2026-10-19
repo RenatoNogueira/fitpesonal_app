@@ -2,7 +2,9 @@
 
 Formato: [versão] — data — resumo. A versão do app fica em `gradle.properties` (`versionName` / `versionCode`).
 
-## [Não lançado]
+## [1.0.0] — 2026-10-19 — primeira versão para publicação
+- Preparação da loja: versão 1.0.0, API 36 (exigência da Play Store), SQLCipher 4.6.1 (páginas de 16 KB), política de privacidade e roteiro de publicação (docs/PUBLICACAO.md).
+- Script para gerar a chave de assinatura (scripts/gerar-keystore.ps1).
 - Estatísticas de uso anônimas (Firebase Analytics), opt-in: telas, ações concluídas e abandono de formulários, sem dados pessoais. Ver docs/ANALYTICS.md; termo de privacidade v3.
 - Arquivos próprios: .fittreino, .fittreinopack e .fitbak (os antigos .rjetreino, .rjetreinopack e .rjebak continuam abrindo).
 - Painel de composição corporal (anel gordura x massa magra, variação e tendência) na avaliação e no treino.
