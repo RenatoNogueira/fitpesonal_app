@@ -10,7 +10,7 @@ A preparação mudou a cadeia de build para atender à Play Store. **Faça isto 
    - Precisa do Android Studio **Meerkat 2024.3.1 Patch 1 ou mais novo** e do **JDK 21** (como antes).
    - Se o Studio pedir para atualizar o plugin ou o Gradle, aceite só as versões acima.
 2. **Build → Clean Project** e depois **Rebuild Project**.
-3. Rode os testes: **Run → Edit Configurations → JUnit** ou `.\gradlew.bat testDebugUnitTest`.
+3. Rode os testes: no painel *Project*, clique com o botão direito em `app/src/test` → **Run 'Tests in ...'**.
 4. Rode o app e passe o checklist da seção 4.
 
 O que mudou e por quê:
@@ -32,7 +32,7 @@ Efeitos do `targetSdk 36` já considerados: o app já usa borda a borda (`enable
    - Cria `fitpersonal-release.jks` e `keystore.properties` (senha aleatória, nada aparece em tela). Os dois ficam fora do Git.
 2. **Faça cópia dos dois arquivos** em local seguro, fora deste computador. Sem eles não dá para atualizar o app.
 3. No Play Console, ative o **Play App Signing** (recomendado): esta chave vira só a *chave de envio*; o Google guarda a definitiva.
-4. Gere o pacote: `.\gradlew.bat :app:bundleRelease` → `app/build/outputs/bundle/release/app-release.aab`.
+4. Gere o pacote: **Build → Generate Signed App Bundle or APK… → Android App Bundle**, escolha `fitpersonal-release.jks` (a senha está em `keystore.properties`) e o tipo **release** → `app/release/app-release.aab`.
    Sem o `keystore.properties`, o release sai **sem assinatura** (não serve para a loja).
 
 ## 2. Chave do clima
@@ -54,10 +54,7 @@ crie uma chave **exclusiva do FitPersonal**, com limite de uso baixo, e troque a
 O tipo de build **`homologacao`** é igual ao release (R8 e redução de recursos ligados), assinado com a chave de debug e com os dados de
 teste. É o que deve ser testado em aparelho **antes** de enviar:
 
-```
-.\gradlew.bat :app:assembleHomologacao
-adb install -r app\build\outputs\apk\homologacao\app-homologacao.apk
-```
+Veja a seção 4A para gerar o APK. Instalar por cabo: `adb install -r app\build\outputs\apk\homologacao\app-homologacao.apk`.
 
 Rode este roteiro no aparelho (marque tudo; qualquer falha que só acontece aqui costuma ser regra do R8):
 
@@ -80,6 +77,24 @@ Rode este roteiro no aparelho (marque tudo; qualquer falha que só acontece aqui
 Se algo falhar só no `homologacao`, me mande o texto do **Relatório de falhas** (já vem legível porque o R8 mantém arquivo e linha).
 Para ler stack traces de usuários no Play Console, envie o `mapping.txt` de cada versão
 (`app/build/outputs/mapping/release/mapping.txt`; o Play Console pede junto do `.aab`).
+
+## 4A. Gerar o APK para os testadores
+
+O projeto não traz os scripts `gradlew`: o Android Studio já baixa e usa o Gradle certo (versão em `gradle/wrapper/gradle-wrapper.properties`).
+
+1. **View → Tool Windows → Build Variants** e escolha **`homologacao`** no módulo `:app`.
+2. **Build → Build Bundle(s) / APK(s) → Build APK(s)**.
+3. Quando terminar, clique em **locate** no aviso (ou abra `app/build/outputs/apk/homologacao/app-homologacao.apk`).
+4. Envie o arquivo para os testadores (WhatsApp, Google Drive, e-mail). Para instalar, o aparelho precisa permitir
+   **instalar apps de fonte desconhecida** para o app que abriu o arquivo (Configurações → Segurança, ou o aviso na hora).
+
+Sobre esse APK:
+- É o **mais parecido com o que vai para a loja** (R8 ligado) e vem com o **carregador de dados de teste** (Perfil → Dados),
+  útil para o testador preencher alunos de exemplo rapidamente.
+- É assinado com a **chave de debug**: serve para testes, **não** para a Play Store (use o `.aab` assinado da seção 1).
+- Se o testador já tinha uma versão de debug instalada, ela precisa ser **desinstalada** antes (chaves de assinatura diferentes).
+- O app mostra "Relatório de falhas" em Perfil → Dados: peça que ele envie esse texto se algo fechar sozinho.
+- Para distribuir sem mandar arquivo, use a **faixa de teste interno** do Play Console com o `.aab` assinado (seção 7).
 
 ## 5. Ficha da loja
 

@@ -91,6 +91,7 @@ Testes: `src/test` (JVM: regras de domínio, cifra, parser do clima, política d
 3. **Sync** → **Run** em um aparelho/emulador API 26+.
 4. Linha de comando (depois de gerar o wrapper uma vez com `gradle wrapper --gradle-version 8.9`):
    ```bash
+   # No Android Studio use os menus (o repositório não traz os scripts gradlew); os comandos abaixo valem se você gerar o wrapper.
    ./gradlew :app:testDebugUnitTest          # testes de domínio/JVM
    ./gradlew :app:assembleDebug              # APK de debug
    ./gradlew :app:connectedDebugAndroidTest  # testes em aparelho (usam pasta temporária e alias próprio do Keystore)
