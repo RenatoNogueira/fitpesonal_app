@@ -35,8 +35,8 @@ fun segredoAssinatura(chave: String, ambiente: String): String? =
     (dadosAssinatura?.getProperty(chave) ?: System.getenv(ambiente))?.trim()?.takeIf { it.isNotEmpty() }
 
 // Versão: -PversionCode=2 -PversionName=1.0.0 na linha de comando (ou em gradle.properties).
-val codigoVersao: Int = (project.findProperty("versionCode") as String?)?.toIntOrNull() ?: 1
-val nomeVersao: String = (project.findProperty("versionName") as String?) ?: "0.2.0"
+val codigoVersao: Int = (project.findProperty("versionCode") as String?)?.toIntOrNull() ?: 10
+val nomeVersao: String = (project.findProperty("versionName") as String?) ?: "1.0.0"
 
 ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
@@ -44,12 +44,12 @@ ksp {
 
 android {
     namespace = "br.com.fitpersonal.app"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "br.com.fitpersonal.app"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = codigoVersao
         versionName = nomeVersao
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -128,7 +128,7 @@ dependencies {
     ksp("androidx.room:room-compiler:2.6.1")
 
     implementation("androidx.datastore:datastore-preferences:1.1.1")
-    implementation("net.zetetic:sqlcipher-android:4.5.6@aar")
+    implementation("net.zetetic:sqlcipher-android:4.6.1@aar")
     implementation("androidx.sqlite:sqlite:2.4.0")
 
     implementation("androidx.work:work-runtime-ktx:2.9.1")
