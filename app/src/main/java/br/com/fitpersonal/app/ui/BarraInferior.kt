@@ -50,7 +50,7 @@ fun BarraInferior(
         modifier
             .fillMaxWidth()
             .navigationBarsPadding()
-            .padding(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 10.dp),
+            .padding(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 2.dp),
     ) {
         Box(
             modifier = Modifier

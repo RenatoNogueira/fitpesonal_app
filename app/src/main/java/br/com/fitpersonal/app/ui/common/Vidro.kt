@@ -96,8 +96,8 @@ fun Modifier.vidro(
 ): Modifier {
     val desfocar = fundo != null && DESFOQUE_DISPONIVEL
     // Com desfoque o corpo fica mais transparente para o fundo aparecer; sem ele, mais opaco para ler bem.
-    val a1 = if (desfocar) 0.58f else 0.90f
-    val a2 = if (desfocar) 0.46f else 0.70f
+    val a1 = if (desfocar) 0.80f else 0.95f
+    val a2 = if (desfocar) 0.72f else 0.88f
     val corpoTopo = if (escuro) Color(0xFF232A1F).copy(alpha = a1) else Color.White.copy(alpha = a1)
     val corpoBase = if (escuro) Color(0xFF151A12).copy(alpha = a2) else Color(0xFFF1F5E8).copy(alpha = a2)
     val luz = if (escuro) 0.22f else 0.95f

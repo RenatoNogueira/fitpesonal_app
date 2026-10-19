@@ -110,7 +110,7 @@ fun AvaliacoesScreen(
                     texto = "Toque em \"Nova avaliação\" para registrar a primeira.",
                 )
                 else -> LazyColumn(
-                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 96.dp),
+                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 88.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
                     // A lista vem do mais recente ao mais antigo: o "anterior" é o próximo da lista.

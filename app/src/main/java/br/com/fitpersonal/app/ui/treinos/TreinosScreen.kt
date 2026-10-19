@@ -116,7 +116,7 @@ fun TreinosScreen(
                     texto = "Toque em \"Novo treino\" para montar a primeira ficha.",
                 )
                 else -> LazyColumn(
-                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 96.dp),
+                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 88.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
                     itemsIndexed(treinos, key = { _, t -> t.id }) { indice, t ->
