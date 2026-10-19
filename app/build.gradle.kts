@@ -80,7 +80,12 @@ android {
         // Igual ao release (minificado, não depurável), assinado com a chave de debug e COM os dados de teste:
         // serve para validar o comportamento de produção antes de publicar. Nunca publique este tipo.
         create("homologacao") {
+            // initWith copia o release como ele está NESTE ponto, antes do bloco release {} abaixo ser aplicado;
+            // por isso o R8 e a redução de recursos são ligados explicitamente aqui.
             initWith(getByName("release"))
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("debug")
             buildConfigField("boolean", "DADOS_TESTE", "true")
             matchingFallbacks += listOf("release")
