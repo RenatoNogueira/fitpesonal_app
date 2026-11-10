@@ -185,6 +185,6 @@ val MIGRATION_13_14 = object : Migration(13, 14) {
 /** v14 → v15: foto postural na avaliação. */
 val MIGRATION_14_15 = object : Migration(14, 15) {
     override fun migrate(db: SupportSQLiteDatabase) {
-        db.execSQL("ALTER TABLE avaliacoes ADD COLUMN fotoPostural TEXT")
+        db.execSQL("ALTER TABLE avaliacoes_fisicas ADD COLUMN fotoPostural TEXT")
     }
 }
