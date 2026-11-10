@@ -106,7 +106,7 @@ fun RecortarImagemDialog(
             // Dentro de Dialog os insets nem sempre chegam: margem fixa garante que os botões fiquem visíveis.
             Column(
                 Modifier.statusBarsPadding().navigationBarsPadding()
-                    .padding(start = 12.dp, end = 12.dp, top = 28.dp, bottom = 32.dp),
+                    .padding(start = 12.dp, end = 12.dp, top = 28.dp, bottom = 40.dp),
             ) {
                 Text(
                     "Recortar imagem",
@@ -114,6 +114,47 @@ fun RecortarImagemDialog(
                     color = Color.White,
                     modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp),
                 )
+                // Ações e proporções ficam NO TOPO: a parte de baixo do diálogo pode ficar sob a barra de gestos do sistema,
+                // e botões ali ficavam cortados e impossíveis de tocar.
+                Row(
+                    Modifier.fillMaxWidth().padding(bottom = 4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    TextButton(onClick = onCancelar) { Text("Cancelar", color = Color.White) }
+                    OutlinedButton(onClick = onUsarOriginal) { Text("Usar inteira", color = Color.White) }
+                    Button(
+                        enabled = img != null,
+                        onClick = {
+                            val i = img ?: return@Button
+                            onConfirmar(
+                                RectF(
+                                    ((corte.left - i.left) / i.width).coerceIn(0f, 1f),
+                                    ((corte.top - i.top) / i.height).coerceIn(0f, 1f),
+                                    ((corte.right - i.left) / i.width).coerceIn(0f, 1f),
+                                    ((corte.bottom - i.top) / i.height).coerceIn(0f, 1f),
+                                ),
+                            )
+                        },
+                    ) { Text("Recortar") }
+                }
+                Row(
+                    Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                ) {
+                    PROPORCOES.forEach { (rotulo, valor) ->
+                        FilterChip(
+                            selected = proporcao == valor,
+                            onClick = { proporcao = valor },
+                            label = { Text(rotulo) },
+                            colors = androidx.compose.material3.FilterChipDefaults.filterChipColors(
+                                labelColor = Color.White,
+                                selectedContainerColor = Color(0xFF3A8208),
+                                selectedLabelColor = Color.White,
+                            ),
+                        )
+                    }
+                }
                 Box(
                     Modifier.weight(1f).fillMaxWidth().onSizeChanged { area = it },
                     contentAlignment = Alignment.Center,
@@ -168,45 +209,6 @@ fun RecortarImagemDialog(
                             }
                         }
                     }
-                }
-                Row(
-                    Modifier.fillMaxWidth().padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                ) {
-                    PROPORCOES.forEach { (rotulo, valor) ->
-                        FilterChip(
-                            selected = proporcao == valor,
-                            onClick = { proporcao = valor },
-                            label = { Text(rotulo) },
-                            colors = androidx.compose.material3.FilterChipDefaults.filterChipColors(
-                                labelColor = Color.White,
-                                selectedContainerColor = Color(0xFF3A8208),
-                                selectedLabelColor = Color.White,
-                            ),
-                        )
-                    }
-                }
-                Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    TextButton(onClick = onCancelar) { Text("Cancelar", color = Color.White) }
-                    OutlinedButton(onClick = onUsarOriginal) { Text("Usar inteira", color = Color.White) }
-                    Button(
-                        enabled = img != null,
-                        onClick = {
-                            val i = img ?: return@Button
-                            onConfirmar(
-                                RectF(
-                                    ((corte.left - i.left) / i.width).coerceIn(0f, 1f),
-                                    ((corte.top - i.top) / i.height).coerceIn(0f, 1f),
-                                    ((corte.right - i.left) / i.width).coerceIn(0f, 1f),
-                                    ((corte.bottom - i.top) / i.height).coerceIn(0f, 1f),
-                                ),
-                            )
-                        },
-                    ) { Text("Recortar") }
                 }
             }
         }
