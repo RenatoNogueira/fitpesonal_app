@@ -495,6 +495,8 @@ private fun PassoFotos(s: AvaliacaoFormState, vm: AvaliacaoFormViewModel) {
                     onRemover = { vm.removerFoto(tipo) },
                 )
             }
+            // número ímpar de fotos: a última não estica a largura toda
+            if (linha.size == 1) Spacer(Modifier.weight(1f))
         }
     }
 }

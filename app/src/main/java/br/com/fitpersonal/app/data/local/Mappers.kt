@@ -57,6 +57,7 @@ fun AvaliacaoEntity.toDomain() = AvaliacaoFisica(
     quadrilCm,
     parq,
     assinatura,
+    fotoPostural,
 )
 
 fun AvaliacaoFisica.toEntity() = AvaliacaoEntity(
@@ -72,6 +73,7 @@ fun AvaliacaoFisica.toEntity() = AvaliacaoEntity(
     quadrilCm,
     parq,
     assinatura,
+    fotoPostural,
 )
 
 fun TreinoEntity.toDomain() = Treino(id, idAluno, nome, objetivo, LocalDate.parse(dataCriacao))

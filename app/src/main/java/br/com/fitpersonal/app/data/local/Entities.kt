@@ -124,6 +124,7 @@ data class AvaliacaoEntity(
     val quadrilCm: Double? = null,
     val parq: String? = null,
     val assinatura: String? = null,
+    val fotoPostural: String? = null,
 )
 
 @Entity(tableName = "modelos_treino")

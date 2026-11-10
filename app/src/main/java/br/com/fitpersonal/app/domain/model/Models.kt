@@ -93,6 +93,8 @@ data class AvaliacaoFisica(
     val parq: String? = null,
     /** Caminho relativo da assinatura do aluno (PNG); null = sem assinatura. */
     val assinatura: String? = null,
+    /** Caminho relativo da foto postural; null = sem foto. */
+    val fotoPostural: String? = null,
 )
 
 /** Interesse de um aluno em um dia/horário que está sem vaga. */

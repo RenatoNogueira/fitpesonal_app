@@ -328,6 +328,7 @@ class DadosDeTeste @Inject constructor(
         val costas = if (fotosCompletas) foto(idAluno, "costas", "Costas", Color.rgb(55, 71, 79)) else null
         val latDir = if (fotosCompletas) foto(idAluno, "lateral_dir", "Lateral dir.", Color.rgb(69, 90, 100)) else null
         val latEsq = if (fotosCompletas) foto(idAluno, "lateral_esq", "Lateral esq.", Color.rgb(84, 110, 122)) else null
+        val postural = if (fotosCompletas) foto(idAluno, "postural", "Postural", Color.rgb(96, 125, 139)) else null
         avaliacoes.salvar(
             AvaliacaoFisica(
                 idAluno = idAluno, data = data, pesoKg = peso, alturaM = altura, percentualGordura = perc,
@@ -344,7 +345,7 @@ class DadosDeTeste @Inject constructor(
                 funcionalMobilidade = "Agachamento profundo com compensação em tornozelo; mobilidade de quadril boa.",
                 cardio = "Teste de caminhada: FC repouso 68 bpm; recuperação em 1 min adequada.",
                 forcaResistencia = "Flexão 14 reps; prancha 55 s; sentar e levantar 5x em 9 s.",
-                fotoFrente = frente, fotoCostas = costas, fotoLateralDir = latDir, fotoLateralEsq = latEsq,
+                fotoFrente = frente, fotoCostas = costas, fotoLateralDir = latDir, fotoLateralEsq = latEsq, fotoPostural = postural,
                 protocoloDobras = ProtocoloDobras.POLLOCK_7, dobrasMm = dobras,
                 cinturaCm = cintura, quadrilCm = quadril,
                 parq = ParqRules.codificar(resp),

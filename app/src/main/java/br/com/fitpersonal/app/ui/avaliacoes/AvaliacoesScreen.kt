@@ -172,7 +172,7 @@ private fun ItemAvaliacao(
     val imc = AvaliacaoRules.imc(a.pesoKg, a.alturaM)
     val classeImc = imc?.let(AvaliacaoRules::classificarImc)
     val pressao = AvaliacaoRules.classificarPressao(a.pressaoSistolica, a.pressaoDiastolica)
-    val fotos = listOfNotNull(a.fotoFrente, a.fotoCostas, a.fotoLateralDir, a.fotoLateralEsq).size
+    val fotos = listOfNotNull(a.fotoFrente, a.fotoCostas, a.fotoLateralDir, a.fotoLateralEsq, a.fotoPostural).size
 
     val titulo = listOfNotNull(
         a.pesoKg?.let { "${it.formatar()} kg" },

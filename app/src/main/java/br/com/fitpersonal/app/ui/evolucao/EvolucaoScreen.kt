@@ -208,6 +208,7 @@ private fun FotosLadoALado(
         Triple("Costas", antes.fotoCostas, depois.fotoCostas),
         Triple("Lateral direita", antes.fotoLateralDir, depois.fotoLateralDir),
         Triple("Lateral esquerda", antes.fotoLateralEsq, depois.fotoLateralEsq),
+        Triple("Postural", antes.fotoPostural, depois.fotoPostural),
     ).filter { it.second != null || it.third != null }
     if (posicoes.isEmpty()) return
 

@@ -188,7 +188,7 @@ class PrivacidadeService @Inject constructor(
         val aluno = alunos.buscar(idAluno) ?: return@withContext
         val arquivosFoto: List<String> =
             listOfNotNull(aluno.fotoPerfil) + avaliacoes.doAlunoSnapshot(idAluno).flatMap { a ->
-                listOfNotNull(a.fotoFrente, a.fotoCostas, a.fotoLateralDir, a.fotoLateralEsq, a.assinatura)
+                listOfNotNull(a.fotoFrente, a.fotoCostas, a.fotoLateralDir, a.fotoLateralEsq, a.fotoPostural, a.assinatura)
             }
         val idsAgenda = agenda.doAlunoSnapshot(idAluno).map { it.id }
 

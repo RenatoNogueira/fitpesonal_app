@@ -11,6 +11,8 @@ enum class TipoFoto(val rotulo: String, val chave: String) {
     COSTAS("Costas", "costas"),
     LATERAL_DIR("Lateral direita", "lateral_dir"),
     LATERAL_ESQ("Lateral esquerda", "lateral_esq"),
+    /** Registro postural (corpo inteiro, para avaliar alinhamento e postura). */
+    POSTURAL("Postural", "postural"),
 }
 
 enum class CampoAvaliacao {
@@ -278,10 +280,12 @@ object AvaliacaoValidator {
         a.fotoCostas?.let { put(TipoFoto.COSTAS, it) }
         a.fotoLateralDir?.let { put(TipoFoto.LATERAL_DIR, it) }
         a.fotoLateralEsq?.let { put(TipoFoto.LATERAL_ESQ, it) }
+        a.fotoPostural?.let { put(TipoFoto.POSTURAL, it) }
     }
 
     fun comFotos(a: AvaliacaoFisica, f: Map<TipoFoto, String>) = a.copy(
         fotoFrente = f[TipoFoto.FRENTE], fotoCostas = f[TipoFoto.COSTAS],
         fotoLateralDir = f[TipoFoto.LATERAL_DIR], fotoLateralEsq = f[TipoFoto.LATERAL_ESQ],
+        fotoPostural = f[TipoFoto.POSTURAL],
     )
 }

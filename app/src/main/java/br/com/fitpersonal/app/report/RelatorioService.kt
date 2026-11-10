@@ -71,6 +71,7 @@ class RelatorioService @Inject constructor(
             Triple("Costas", antes.fotoCostas, depois.fotoCostas),
             Triple("Lateral dir.", antes.fotoLateralDir, depois.fotoLateralDir),
             Triple("Lateral esq.", antes.fotoLateralEsq, depois.fotoLateralEsq),
+            Triple("Postural", antes.fotoPostural, depois.fotoPostural),
         )
         return posicoes.flatMap { (nome, a, d) ->
             val ba = a?.let { carregar(it, 600) }

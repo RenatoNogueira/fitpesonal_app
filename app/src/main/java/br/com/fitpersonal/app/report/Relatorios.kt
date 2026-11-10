@@ -155,6 +155,7 @@ object AvaliacaoPdf {
         val legendas = mapOf(
             TipoFoto.FRENTE to a.fotoFrente, TipoFoto.COSTAS to a.fotoCostas,
             TipoFoto.LATERAL_DIR to a.fotoLateralDir, TipoFoto.LATERAL_ESQ to a.fotoLateralEsq,
+            TipoFoto.POSTURAL to a.fotoPostural,
         )
         val imagens = legendas.mapNotNull { (tipo, caminho) ->
             caminho?.let(fotos)?.let { "Vista ${tipo.rotulo.lowercase(PT_BR)}" to it }
